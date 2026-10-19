@@ -37,11 +37,21 @@ export function ServiceIndex({ groups }: { groups: ServiceGroup[] }) {
     let tx = 0,
       ty = 0,
       x = 0,
-      y = 0;
+      y = 0,
+      snap = true;
     const onMove = (e: PointerEvent) => {
       const r = list.getBoundingClientRect();
       tx = e.clientX - r.left;
       ty = e.clientY - r.top;
+      // First move after entering: start exactly under the cursor instead of gliding in from the corner.
+      if (snap) {
+        x = tx;
+        y = ty;
+        snap = false;
+      }
+    };
+    const onLeave = () => {
+      snap = true;
     };
     const tick = () => {
       x += (tx - x) * 0.14;
@@ -50,9 +60,11 @@ export function ServiceIndex({ groups }: { groups: ServiceGroup[] }) {
       raf = requestAnimationFrame(tick);
     };
     list.addEventListener("pointermove", onMove);
+    list.addEventListener("pointerleave", onLeave);
     raf = requestAnimationFrame(tick);
     return () => {
       list.removeEventListener("pointermove", onMove);
+      list.removeEventListener("pointerleave", onLeave);
       cancelAnimationFrame(raf);
     };
   }, [enabled]);
@@ -107,16 +119,17 @@ export function ServiceIndex({ groups }: { groups: ServiceGroup[] }) {
         <div
           ref={previewRef}
           aria-hidden
-          className="pointer-events-none absolute left-0 top-0 z-10 hidden w-[22vw] max-w-[340px] lg:block"
+          className="pointer-events-none absolute left-0 top-0 z-10 hidden aspect-[4/5] w-[22vw] max-w-[340px] lg:block"
         >
           {groups.map((g, i) =>
             g.image ? (
               <div
                 key={g.category}
-                className="absolute inset-x-0 top-0 aspect-[4/5] overflow-hidden transition-[opacity,clip-path] duration-700 ease-[var(--ease-out)]"
+                className="absolute inset-0 overflow-hidden transition-[opacity,clip-path,transform] duration-700 ease-[var(--ease-out)]"
                 style={{
                   opacity: hovered === i ? 1 : 0,
-                  clipPath: hovered === i ? "inset(0 0 0 0)" : "inset(12% 12% 12% 12%)",
+                  clipPath: hovered === i ? "inset(0 0 0 0)" : "inset(50% 50% 50% 50%)",
+                  transform: hovered === i ? "scale(1)" : "scale(0.85)",
                 }}
               >
                 <Image src={g.image.url} alt="" fill sizes="340px" className="object-cover" />
