@@ -513,23 +513,42 @@ async function InsightsSection({ d }: { d: Data }) {
 
 /* ───────────────────────── Comparison ───────────────────────── */
 
-type CompareRow = { label?: string; a: string; b: string; ours: string };
+type CompareStyle = "ours" | "none" | "muted";
+type CompareColumn = { title: string; style: CompareStyle; points: string[] };
+
+/** Columns in display order. Current data: columns[] each with its own points; older data used shared rows (a/b/ours). */
+function compareColumns(d: Data, brandName: string): CompareColumn[] {
+  const cols = arr<Record<string, unknown>>(d, "columns");
+  const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+  const styleOf = (v: unknown): CompareStyle => (v === "ours" || v === "muted" ? v : "none");
+  let out: CompareColumn[];
+  if (cols.some((c) => Array.isArray(c.points))) {
+    out = cols.map((c) => ({
+      title: str(c.title),
+      style: styleOf(c.style),
+      points: (Array.isArray(c.points) ? (c.points as Record<string, unknown>[]) : []).map((p) => str(p?.text)),
+    }));
+  } else {
+    const rows = arr<Record<string, unknown>>(d, "rows");
+    const legacyStyle = { a: "none", b: "muted", ours: "ours" } as const;
+    const legacyTitle = { a: s(d, "colATitle"), b: s(d, "colBTitle"), ours: s(d, "oursTitle") };
+    const keys = cols.length ? cols.map((c) => str(c.column) as keyof typeof legacyStyle) : (["a", "b", "ours"] as const);
+    out = keys
+      .filter((k) => k in legacyStyle)
+      .map((k, i) => ({ title: str(cols[i]?.title) || legacyTitle[k], style: legacyStyle[k], points: rows.map((r) => str(r[k])) }));
+  }
+  return out
+    .map((c) => ({ ...c, title: c.title || (c.style === "ours" ? brandName : "") }))
+    .filter((c) => c.title || c.points.some(Boolean));
+}
 
 function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
-  const rows = arr<CompareRow>(d, "rows").filter((r) => r.a || r.b || r.ours);
-  if (!rows.length) return null;
-  // Column order comes from the admin "Columns" list; older data used fixed colATitle/colBTitle/oursTitle fields.
-  const tones = { a: "none", b: "muted", ours: "ours" } as const;
-  const legacyTitles = { a: s(d, "colATitle") || "Option A", b: s(d, "colBTitle") || "Option B", ours: s(d, "oursTitle") };
-  const seen = new Set<string>();
-  const configured = arr<{ title?: string; column?: string }>(d, "columns").flatMap((c) => {
-    const key = c.column ?? "a";
-    if (!(key in tones) || seen.has(key)) return [];
-    seen.add(key);
-    return [{ key: key as keyof typeof tones, title: c.title ?? "" }];
-  });
-  const order = configured.length ? configured : (["a", "b", "ours"] as const).map((key) => ({ key, title: legacyTitles[key] }));
-  const columns = order.map(({ key, title }) => ({ key, tone: tones[key], title: title || (key === "ours" ? ctx.settings.brandName : legacyTitles[key]) }));
+  const columns = compareColumns(d, ctx.settings.brandName).slice(0, 3);
+  const rowCount = Math.max(0, ...columns.map((c) => c.points.length));
+  if (!columns.length || !rowCount) return null;
+  const labels = arr<Record<string, unknown>>(d, "rowLabels").length
+    ? arr<Record<string, unknown>>(d, "rowLabels").map((r) => (typeof r.label === "string" ? r.label : ""))
+    : arr<Record<string, unknown>>(d, "rows").map((r) => (typeof r.label === "string" ? r.label : ""));
   return (
     <section className="section-tight" aria-labelledby="compare-title">
       <div className="wrap">
@@ -547,20 +566,18 @@ function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
           {s(d, "description") && <p className="t-lead mt-5 text-muted t-pretty">{s(d, "description")}</p>}
         </div>
 
-        {/* Desktop: cards on a shared row grid (subgrid) so rows line up. Mobile: stacked cards in the same order. */}
+        {/* Desktop: cards on a shared row grid (subgrid) so point N lines up across columns. Mobile: stacked cards in the same order. */}
         <div
           className={`mt-14 flex flex-col gap-4 lg:grid lg:gap-x-4 lg:gap-y-0 ${columns.length === 3 ? "lg:grid-cols-3" : columns.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}
-          style={{ gridTemplateRows: `auto repeat(${rows.length}, auto)` }}
+          style={{ gridTemplateRows: `auto repeat(${rowCount}, auto)` }}
         >
-          {columns.map((col) => {
-            const ours = col.tone === "ours";
+          {columns.map((col, ci) => {
+            const ours = col.style === "ours";
             return (
               <div
-                key={col.key}
+                key={ci}
                 className={`flex flex-col border p-6 lg:row-span-full lg:grid lg:grid-rows-subgrid lg:p-8 ${
-                  ours
-                    ? "border-accent/70 bg-surface shadow-[0_0_60px_-24px_var(--brand-accent)]"
-                    : "border-line bg-bg"
+                  ours ? "border-accent/70 bg-surface shadow-[0_0_60px_-24px_var(--brand-accent)]" : "border-line bg-bg"
                 }`}
                 data-reveal
               >
@@ -572,27 +589,33 @@ function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
                     ) : (
                       <span className="signal-dot" aria-hidden />
                     )
-                  ) : col.tone === "none" ? (
+                  ) : col.style === "none" ? (
                     <Ban className="h-5 w-5 text-muted" aria-hidden />
                   ) : (
                     <Users className="h-5 w-5 text-muted" aria-hidden />
                   )}
                   <span className={ours ? "text-ink" : "text-ink/80"}>{col.title}</span>
                 </h3>
-                {rows.map((r, i) => (
-                  <div key={i} className="flex gap-3 border-t border-line py-4">
-                    {ours ? (
-                      <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
-                    ) : (
-                      <CircleX className={`mt-0.5 h-5 w-5 shrink-0 ${col.tone === "none" ? "text-[#ff8a7a]" : "text-muted"}`} aria-hidden />
-                    )}
-                    <p className={`text-[0.9375rem] ${ours ? "text-ink" : "text-ink/75"}`}>
-                      {r.label && <span className="mb-0.5 block text-xs uppercase tracking-[0.12em] text-muted lg:hidden">{r.label}</span>}
-                      <span className="sr-only">{ours ? "Yes: " : "Limitation: "}</span>
-                      {r[col.key]}
-                    </p>
-                  </div>
-                ))}
+                {Array.from({ length: rowCount }, (_, i) => {
+                  const text = col.points[i] ?? "";
+                  return (
+                    <div key={i} className={`gap-3 border-t border-line py-4 ${text ? "flex" : "hidden lg:flex"}`}>
+                      {text &&
+                        (ours ? (
+                          <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+                        ) : (
+                          <CircleX className={`mt-0.5 h-5 w-5 shrink-0 ${col.style === "none" ? "text-[#ff8a7a]" : "text-muted"}`} aria-hidden />
+                        ))}
+                      {text && (
+                        <p className={`text-[0.9375rem] ${ours ? "text-ink" : "text-ink/75"}`}>
+                          {labels[i] && <span className="mb-0.5 block text-xs uppercase tracking-[0.12em] text-muted lg:hidden">{labels[i]}</span>}
+                          <span className="sr-only">{ours ? "Yes: " : "Limitation: "}</span>
+                          {text}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             );
           })}

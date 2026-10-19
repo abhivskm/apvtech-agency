@@ -144,30 +144,34 @@ export const SECTION_TYPES = {
   },
   comparison: {
     label: "Comparison (3 columns)",
-    description: "Side-by-side comparison. Your column is highlighted; leave its title empty to use the brand name. Keep points factual.",
+    description: "Side-by-side comparison. Each column has its own title and points; reorder columns with ↑ ↓. Your column is highlighted. Keep points factual.",
     fields: [
       { name: "eyebrow", label: "Eyebrow", kind: "text", max: 80 },
       { name: "heading", label: "Heading", kind: "textarea", required: true, max: 160 },
       { name: "description", label: "Description", kind: "textarea", max: 400 },
-      { name: "columns", label: "Columns (use ↑ ↓ to change the order)", kind: "list", max: 3, help: "The column showing \"Your column\" points is highlighted. Leave its title empty to use your brand name.", fields: [
-        { name: "title", label: "Column title", kind: "text", max: 60 },
-        { name: "column", label: "Points shown", kind: "select", options: [
-          { value: "a", label: "Column 1 points (e.g. No website)" },
-          { value: "ours", label: "Your column points (highlighted)" },
-          { value: "b", label: "Column 2 points (e.g. Freelancers & agencies)" },
+      { name: "columns", label: "Columns (use ↑ ↓ to change the order)", kind: "list", max: 3, help: "Each column has its own points. Point #1 of every column sits on the same line, then #2, and so on.", fields: [
+        { name: "title", label: "Column title", kind: "text", max: 60, help: "On your highlighted column, leave empty to use your brand name." },
+        { name: "style", label: "Style", kind: "select", options: [
+          { value: "none", label: "Alternative — red ✕ (e.g. No website)" },
+          { value: "ours", label: "Your column — highlighted with ✓" },
+          { value: "muted", label: "Alternative — grey ✕ (e.g. Freelancers & agencies)" },
+        ] },
+        { name: "points", label: "Points", kind: "list", max: 10, fields: [
+          { name: "text", label: "Point", kind: "text", required: true, max: 160 },
         ] },
       ] },
-      { name: "rows", label: "Rows", kind: "list", max: 10, fields: [
-        { name: "label", label: "Row label (shown on mobile)", kind: "text", max: 60 },
-        { name: "a", label: "Column 1 point", kind: "text", required: true, max: 160 },
-        { name: "ours", label: "Your column point", kind: "text", required: true, max: 160 },
-        { name: "b", label: "Column 2 point", kind: "text", required: true, max: 160 },
+      { name: "rowLabels", label: "Row labels (mobile only)", kind: "list", max: 10, help: "Small label above each point on phones, in the same order as the points, e.g. Planning.", fields: [
+        { name: "label", label: "Label", kind: "text", max: 60 },
       ] },
     ],
     defaults: {
       heading: "How we compare",
-      columns: [{ title: "Option A", column: "a" }, { title: "", column: "ours" }, { title: "Option B", column: "b" }],
-      rows: [],
+      columns: [
+        { title: "Option A", style: "none", points: [] },
+        { title: "", style: "ours", points: [] },
+        { title: "Option B", style: "muted", points: [] },
+      ],
+      rowLabels: [],
     },
   },
   plans: {
