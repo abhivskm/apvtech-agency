@@ -13,3 +13,7 @@ next-env.d.ts
 /public/uploads/
 .DS_Store
 npm-debug.log*
+
+.vercel
+.env*
+!.env.example
