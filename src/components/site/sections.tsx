@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Plus, Quote } from "lucide-react";
+import { ArrowUpRight, Ban, CircleCheck, CircleX, Plus, Quote, Users } from "lucide-react";
 import type { PageSection } from "@prisma/client";
 import {
   getMediaMap,
@@ -96,6 +96,8 @@ async function Section({ type, data, ctx }: { type: string; data: Data; ctx: Ctx
       return <InsightsSection d={data} />;
     case "plans":
       return <PlansSection d={data} ctx={ctx} />;
+    case "comparison":
+      return <ComparisonSection d={data} ctx={ctx} />;
     case "cta":
       return <CtaSection d={data} ctx={ctx} />;
     case "richText":
@@ -503,6 +505,90 @@ async function InsightsSection({ d }: { d: Data }) {
               <ArticleCard article={a} />
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── Comparison ───────────────────────── */
+
+type CompareRow = { label?: string; a: string; b: string; ours: string };
+
+function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
+  const rows = arr<CompareRow>(d, "rows").filter((r) => r.a || r.b || r.ours);
+  if (!rows.length) return null;
+  const columns = [
+    { key: "a" as const, title: s(d, "colATitle") || "Option A", tone: "none" as const },
+    { key: "b" as const, title: s(d, "colBTitle") || "Option B", tone: "muted" as const },
+    { key: "ours" as const, title: s(d, "oursTitle") || ctx.settings.brandName, tone: "ours" as const },
+  ];
+  return (
+    <section className="section-tight" aria-labelledby="compare-title">
+      <div className="wrap">
+        <div className="mx-auto max-w-5xl text-center">
+          {s(d, "eyebrow") && (
+            <p className="t-eyebrow inline-flex items-center gap-3" data-reveal>
+              <span className="h-px w-6 bg-accent" aria-hidden />
+              {s(d, "eyebrow")}
+              <span className="h-px w-6 bg-accent" aria-hidden />
+            </p>
+          )}
+          <h2 id="compare-title" className="t-h1 mt-5 t-balance" data-reveal>
+            <Lines text={s(d, "heading")} />
+          </h2>
+          {s(d, "description") && <p className="t-lead mt-5 text-muted t-pretty">{s(d, "description")}</p>}
+        </div>
+
+        {/* Desktop: three cards on a shared row grid (subgrid) so rows line up. Mobile: stacked cards, ours first. */}
+        <div
+          className="mt-14 flex flex-col gap-4 lg:grid lg:grid-cols-3 lg:gap-x-4 lg:gap-y-0"
+          style={{ gridTemplateRows: `auto repeat(${rows.length}, auto)` }}
+        >
+          {columns.map((col) => {
+            const ours = col.tone === "ours";
+            return (
+              <div
+                key={col.key}
+                className={`flex flex-col border p-6 lg:row-span-full lg:grid lg:grid-rows-subgrid lg:p-8 ${
+                  ours
+                    ? "order-first border-accent/70 bg-surface shadow-[0_0_60px_-24px_var(--brand-accent)] lg:order-none"
+                    : "border-line bg-bg"
+                }`}
+                data-reveal
+              >
+                <h3 className="flex items-center gap-3 pb-4 font-display text-xl lg:pb-6">
+                  {ours ? (
+                    ctx.settings.logo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={ctx.settings.logo.url} alt="" className="h-7 w-auto" />
+                    ) : (
+                      <span className="signal-dot" aria-hidden />
+                    )
+                  ) : col.tone === "none" ? (
+                    <Ban className="h-5 w-5 text-muted" aria-hidden />
+                  ) : (
+                    <Users className="h-5 w-5 text-muted" aria-hidden />
+                  )}
+                  <span className={ours ? "text-ink" : "text-ink/80"}>{col.title}</span>
+                </h3>
+                {rows.map((r, i) => (
+                  <div key={i} className="flex gap-3 border-t border-line py-4">
+                    {ours ? (
+                      <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+                    ) : (
+                      <CircleX className={`mt-0.5 h-5 w-5 shrink-0 ${col.tone === "none" ? "text-[#ff8a7a]" : "text-muted"}`} aria-hidden />
+                    )}
+                    <p className={`text-[0.9375rem] ${ours ? "text-ink" : "text-ink/75"}`}>
+                      {r.label && <span className="mb-0.5 block text-xs uppercase tracking-[0.12em] text-muted lg:hidden">{r.label}</span>}
+                      <span className="sr-only">{ours ? "Yes: " : "Limitation: "}</span>
+                      {r[col.key]}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

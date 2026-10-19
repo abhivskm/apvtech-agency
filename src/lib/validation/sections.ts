@@ -142,6 +142,25 @@ export const SECTION_TYPES = {
     ],
     defaults: { heading: "What clients say" },
   },
+  comparison: {
+    label: "Comparison (3 columns)",
+    description: "Side-by-side comparison. Your column is highlighted; leave its title empty to use the brand name. Keep points factual.",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", kind: "text", max: 80 },
+      { name: "heading", label: "Heading", kind: "textarea", required: true, max: 160 },
+      { name: "description", label: "Description", kind: "textarea", max: 400 },
+      { name: "colATitle", label: "Column 1 title", kind: "text", max: 60, help: "e.g. No website" },
+      { name: "colBTitle", label: "Column 2 title", kind: "text", max: 60, help: "e.g. Freelancers & other agencies" },
+      { name: "oursTitle", label: "Your column title", kind: "text", max: 60, help: "Leave empty to use your brand name." },
+      { name: "rows", label: "Rows", kind: "list", max: 10, fields: [
+        { name: "label", label: "Row label (shown on mobile)", kind: "text", max: 60 },
+        { name: "a", label: "Column 1", kind: "text", required: true, max: 160 },
+        { name: "b", label: "Column 2", kind: "text", required: true, max: 160 },
+        { name: "ours", label: "Your column", kind: "text", required: true, max: 160 },
+      ] },
+    ],
+    defaults: { heading: "How we compare", colATitle: "Option A", colBTitle: "Option B", rows: [] },
+  },
   plans: {
     label: "Plans & pricing",
     description: "Published plans from Admin → Plans & Pricing, with a link to the full pricing page.",
