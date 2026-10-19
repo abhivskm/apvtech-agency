@@ -110,6 +110,10 @@ To run it non-interactively (for example once, on first deploy):
 ADMIN_EMAIL=you@yourdomain.in ADMIN_NAME="Your Name" ADMIN_PASSWORD='…' npm run create-admin
 ```
 
+**Production, from your computer:** `npm run create-admin:prod` asks you to paste the production connection string (hidden input) and shows the target database before creating anything.
+
+**Production, from the browser (one-time setup):** add a `SETUP_TOKEN` environment variable (a random string of at least 24 characters) in your host and redeploy. While the database has **no users at all**, `/admin/login` then shows a "First-time setup" form that requires that code. It creates the first Super Admin and signs you in. Once any admin exists, the form and its server action are permanently disabled. Remove `SETUP_TOKEN` afterwards.
+
 Forgot the password? Run `npm run create-admin -- --reset-password` with the same email. Super Admins can add more users in **Admin → Users & Permissions**, and everyone can change their own password in **My account**.
 
 ## Managing content
