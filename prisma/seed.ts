@@ -63,7 +63,7 @@ async function seedSettings() {
           serviceAreas: "India",
           footerText: "A connected digital studio for ambitious businesses across India.",
           copyrightText: "© {year} {brand}. All rights reserved.",
-          defaultSeoTitle: "FORM & SIGNAL — Websites, SEO, content & digital growth",
+          defaultSeoTitle: "FORM & SIGNAL — Digital Agency in India for Websites, SEO & Growth",
           defaultSeoDescription:
             "One partner for every digital touchpoint: websites, e-commerce, SEO and Google presence, social media, photography, video, ads and automation for businesses across India.",
           titleTemplate: "%s | {brand}",

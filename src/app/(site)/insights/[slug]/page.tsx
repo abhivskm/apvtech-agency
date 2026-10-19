@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: Props) {
   const a = await load(slug);
   if (!a) return {};
   return buildMetadata({
+    ogLabel: "Insights",
     title: a.title,
     seoTitle: a.seoTitle,
     description: a.seoDescription || a.excerpt,

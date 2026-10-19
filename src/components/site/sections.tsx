@@ -17,7 +17,8 @@ import {
 } from "@/lib/content/queries";
 import { SECTION_TYPES, isSectionType, type LinkValue } from "@/lib/validation/sections";
 import { sanitizeRichText } from "@/lib/sanitize";
-import { fillTokens } from "@/lib/seo";
+import { faqJsonLd, fillTokens } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 import { whatsappLink } from "@/lib/whatsapp";
 import { isSafeHref } from "@/lib/url-safety";
 import { embedUrl } from "@/lib/video";
@@ -782,6 +783,7 @@ function VideoSection({ d, ctx }: { d: Data; ctx: Ctx }) {
 export function FaqList({ items }: { items: { id: string; question: string; answer: string }[] }) {
   return (
     <div className="border-t border-line">
+      <JsonLd data={faqJsonLd(items)} />
       {items.map((f) => (
         <details key={f.id} className="faq group border-b border-line">
           <summary className="flex items-start justify-between gap-6 py-6">

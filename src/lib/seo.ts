@@ -20,6 +20,8 @@ type MetaInput = {
   image?: Pick<Media, "url" | "alt" | "width" | "height"> | null;
   canonicalUrl?: string | null;
   noindex?: boolean;
+  /** Small label on the generated social card, e.g. "Services". */
+  ogLabel?: string;
   type?: "website" | "article";
   publishedTime?: Date | null;
   modifiedTime?: Date | null;
@@ -30,11 +32,20 @@ export async function buildMetadata(input: MetaInput): Promise<Metadata> {
   const settings = await getSettings();
   const title = input.seoTitle || input.title || undefined;
   const description = input.description || settings?.defaultSeoDescription || undefined;
-  const image = input.image ?? settings?.ogImage ?? null;
+  // Homepage uses the site-wide sharing image (Admin → SEO); other pages without their own image get a branded title card.
+  const image = input.image ?? (input.path === "/" ? settings?.ogImage : null) ?? null;
   const canonical = input.canonicalUrl || absoluteUrl(input.path, settings);
+  const cardTitle = input.title || title || "";
   const images = image
     ? [{ url: absoluteUrl(image.url, settings), alt: image.alt || title || settings?.brandName, width: image.width ?? undefined, height: image.height ?? undefined }]
-    : undefined;
+    : [
+        {
+          url: absoluteUrl(`/og?${new URLSearchParams({ title: cardTitle, ...(input.ogLabel ? { label: input.ogLabel } : {}) })}`, settings),
+          alt: cardTitle || settings?.brandName,
+          width: 1200,
+          height: 630,
+        },
+      ];
   return {
     title: title ?? { absolute: settings?.defaultSeoTitle ?? "" },
     description,
@@ -58,6 +69,20 @@ export async function buildMetadata(input: MetaInput): Promise<Metadata> {
 
 /* ───────────── Structured data ───────────── */
 
+/** Configured service areas, or the business country (India by default). */
+function areaServed(settings: Settings) {
+  const areas = (settings.serviceAreas ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  return areas.length ? areas : [{ "@type": "Country", name: settings.country === "IN" || !settings.country ? "India" : settings.country }];
+}
+
+export function faqJsonLd(items: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((f) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: f.answer } })),
+  };
+}
+
 export function organizationJsonLd(settings: Settings, socialUrls: string[]) {
   const url = siteUrl(settings);
   const hasAddress = Boolean(settings.address && settings.city);
@@ -72,7 +97,8 @@ export function organizationJsonLd(settings: Settings, socialUrls: string[]) {
     ...(settings.contactEmail ? { email: settings.contactEmail } : {}),
     ...(settings.phone ? { telephone: settings.phone } : {}),
     ...(socialUrls.length ? { sameAs: socialUrls } : {}),
-    ...(settings.serviceAreas ? { areaServed: settings.serviceAreas.split(",").map((s) => s.trim()).filter(Boolean) } : {}),
+    areaServed: areaServed(settings),
+    ...(settings.tagline ? { slogan: settings.tagline } : {}),
   };
   // LocalBusiness-type data is only emitted when a real address has been supplied in settings.
   if (hasAddress) {
@@ -112,7 +138,7 @@ export function serviceJsonLd(s: { title: string; shortDescription: string; slug
     description: s.shortDescription,
     url: absoluteUrl(`/services/${s.slug}`, settings),
     provider: { "@id": `${siteUrl(settings)}/#organization` },
-    ...(settings.serviceAreas ? { areaServed: settings.serviceAreas } : {}),
+    areaServed: areaServed(settings),
   };
 }
 
