@@ -8,15 +8,20 @@
  *
  *   ADMIN_EMAIL=you@example.com ADMIN_NAME="Your Name" ADMIN_PASSWORD='…' npm run create-admin
  *
+ * Production (e.g. Neon on Vercel): `npm run create-admin:prod` asks you to paste the production
+ * connection string (hidden input — it never lands in shell history) and shows the target host first.
+ *
  * There is no default account and no credentials are stored in the repository.
  * If the email already exists, the script refuses unless --reset-password is passed.
  */
 import { PrismaClient } from "@prisma/client";
 import { createInterface } from "node:readline";
+import { readFileSync } from "node:fs";
 import { hashPassword, passwordProblem } from "../src/lib/auth/password";
 
-const db = new PrismaClient();
+let db: PrismaClient;
 const resetPassword = process.argv.includes("--reset-password");
+const prodMode = process.argv.includes("--prod");
 
 function ask(question: string, hidden = false): Promise<string> {
   return new Promise((resolve) => {
@@ -36,7 +41,39 @@ function ask(question: string, hidden = false): Promise<string> {
   });
 }
 
+function describe(url: string) {
+  try {
+    const u = new URL(url);
+    return `${u.hostname}${u.port ? ":" + u.port : ""}/${u.pathname.slice(1)}`;
+  } catch {
+    return "(unparseable URL)";
+  }
+}
+
+function urlFromDotEnv(): string {
+  try {
+    const m = readFileSync(".env", "utf8").match(/^DATABASE_URL="?([^"\r\n]+)"?/m);
+    return m?.[1] ?? "";
+  } catch {
+    return "";
+  }
+}
+
+const LOCAL_HOST = /localhost|127\.0\.0\.1/;
+
 async function main() {
+  let url = process.env.DATABASE_URL || urlFromDotEnv();
+  if (prodMode) {
+    url = (await ask("Paste the PRODUCTION connection string (DATABASE_URL_UNPOOLED, input hidden): ", true)).trim().replace(/^["']|["']$/g, "");
+    if (!/^postgres(ql)?:\/\//.test(url)) throw new Error("That doesn't look like a postgres:// connection string.");
+    if (LOCAL_HOST.test(url)) throw new Error("That is a local database, not production.");
+  }
+  if (!url) throw new Error("No DATABASE_URL found (set it in .env, or use npm run create-admin:prod).");
+  const target = describe(url);
+  console.log(`\nTarget database: ${target}  [${LOCAL_HOST.test(target) ? "LOCAL" : "REMOTE / PRODUCTION"}]\n`);
+  db = new PrismaClient({ datasources: { db: { url } } });
+  await db.$connect();
+
   const email = (process.env.ADMIN_EMAIL || (await ask("Admin email: "))).toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Invalid email address.");
 
@@ -74,4 +111,4 @@ main()
     console.error(`\n✖ ${e instanceof Error ? e.message : e}`);
     process.exitCode = 1;
   })
-  .finally(() => db.$disconnect());
+  .finally(() => db?.$disconnect());
