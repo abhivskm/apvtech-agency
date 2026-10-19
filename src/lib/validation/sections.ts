@@ -149,17 +149,26 @@ export const SECTION_TYPES = {
       { name: "eyebrow", label: "Eyebrow", kind: "text", max: 80 },
       { name: "heading", label: "Heading", kind: "textarea", required: true, max: 160 },
       { name: "description", label: "Description", kind: "textarea", max: 400 },
-      { name: "colATitle", label: "Column 1 title", kind: "text", max: 60, help: "e.g. No website" },
-      { name: "colBTitle", label: "Column 2 title", kind: "text", max: 60, help: "e.g. Freelancers & other agencies" },
-      { name: "oursTitle", label: "Your column title", kind: "text", max: 60, help: "Leave empty to use your brand name." },
+      { name: "columns", label: "Columns (use ↑ ↓ to change the order)", kind: "list", max: 3, help: "The column showing \"Your column\" points is highlighted. Leave its title empty to use your brand name.", fields: [
+        { name: "title", label: "Column title", kind: "text", max: 60 },
+        { name: "column", label: "Points shown", kind: "select", options: [
+          { value: "a", label: "Column 1 points (e.g. No website)" },
+          { value: "ours", label: "Your column points (highlighted)" },
+          { value: "b", label: "Column 2 points (e.g. Freelancers & agencies)" },
+        ] },
+      ] },
       { name: "rows", label: "Rows", kind: "list", max: 10, fields: [
         { name: "label", label: "Row label (shown on mobile)", kind: "text", max: 60 },
-        { name: "a", label: "Column 1", kind: "text", required: true, max: 160 },
-        { name: "b", label: "Column 2", kind: "text", required: true, max: 160 },
-        { name: "ours", label: "Your column", kind: "text", required: true, max: 160 },
+        { name: "a", label: "Column 1 point", kind: "text", required: true, max: 160 },
+        { name: "ours", label: "Your column point", kind: "text", required: true, max: 160 },
+        { name: "b", label: "Column 2 point", kind: "text", required: true, max: 160 },
       ] },
     ],
-    defaults: { heading: "How we compare", colATitle: "Option A", colBTitle: "Option B", rows: [] },
+    defaults: {
+      heading: "How we compare",
+      columns: [{ title: "Option A", column: "a" }, { title: "", column: "ours" }, { title: "Option B", column: "b" }],
+      rows: [],
+    },
   },
   plans: {
     label: "Plans & pricing",

@@ -518,11 +518,18 @@ type CompareRow = { label?: string; a: string; b: string; ours: string };
 function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
   const rows = arr<CompareRow>(d, "rows").filter((r) => r.a || r.b || r.ours);
   if (!rows.length) return null;
-  const columns = [
-    { key: "a" as const, title: s(d, "colATitle") || "Option A", tone: "none" as const },
-    { key: "b" as const, title: s(d, "colBTitle") || "Option B", tone: "muted" as const },
-    { key: "ours" as const, title: s(d, "oursTitle") || ctx.settings.brandName, tone: "ours" as const },
-  ];
+  // Column order comes from the admin "Columns" list; older data used fixed colATitle/colBTitle/oursTitle fields.
+  const tones = { a: "none", b: "muted", ours: "ours" } as const;
+  const legacyTitles = { a: s(d, "colATitle") || "Option A", b: s(d, "colBTitle") || "Option B", ours: s(d, "oursTitle") };
+  const seen = new Set<string>();
+  const configured = arr<{ title?: string; column?: string }>(d, "columns").flatMap((c) => {
+    const key = c.column ?? "a";
+    if (!(key in tones) || seen.has(key)) return [];
+    seen.add(key);
+    return [{ key: key as keyof typeof tones, title: c.title ?? "" }];
+  });
+  const order = configured.length ? configured : (["a", "b", "ours"] as const).map((key) => ({ key, title: legacyTitles[key] }));
+  const columns = order.map(({ key, title }) => ({ key, tone: tones[key], title: title || (key === "ours" ? ctx.settings.brandName : legacyTitles[key]) }));
   return (
     <section className="section-tight" aria-labelledby="compare-title">
       <div className="wrap">
@@ -540,9 +547,9 @@ function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
           {s(d, "description") && <p className="t-lead mt-5 text-muted t-pretty">{s(d, "description")}</p>}
         </div>
 
-        {/* Desktop: three cards on a shared row grid (subgrid) so rows line up. Mobile: stacked cards, ours first. */}
+        {/* Desktop: cards on a shared row grid (subgrid) so rows line up. Mobile: stacked cards in the same order. */}
         <div
-          className="mt-14 flex flex-col gap-4 lg:grid lg:grid-cols-3 lg:gap-x-4 lg:gap-y-0"
+          className={`mt-14 flex flex-col gap-4 lg:grid lg:gap-x-4 lg:gap-y-0 ${columns.length === 3 ? "lg:grid-cols-3" : columns.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}
           style={{ gridTemplateRows: `auto repeat(${rows.length}, auto)` }}
         >
           {columns.map((col) => {
@@ -552,7 +559,7 @@ function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
                 key={col.key}
                 className={`flex flex-col border p-6 lg:row-span-full lg:grid lg:grid-rows-subgrid lg:p-8 ${
                   ours
-                    ? "order-first border-accent/70 bg-surface shadow-[0_0_60px_-24px_var(--brand-accent)] lg:order-none"
+                    ? "border-accent/70 bg-surface shadow-[0_0_60px_-24px_var(--brand-accent)]"
                     : "border-line bg-bg"
                 }`}
                 data-reveal

@@ -85,7 +85,7 @@ function FieldRenderer({ spec, form }: { spec: FieldSpec; form: FormApi }) {
               <li key={i} className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
                 <div className="mb-2 flex items-center justify-between text-xs text-zinc-500">
                   <span>
-                    #{i + 1} {typeof item.title === "string" ? `— ${item.title}` : ""}
+                    #{i + 1} {typeof item.title === "string" && item.title ? `— ${item.title}` : typeof item.label === "string" && item.label ? `— ${item.label}` : ""}
                   </span>
                   <span className="flex gap-1">
                     <button type="button" className="a-btn a-btn-ghost a-btn-sm" disabled={i === 0} onClick={() => setItems(items.map((x, j) => (j === i - 1 ? items[i] : j === i ? items[i - 1] : x)))} aria-label="Move up">
