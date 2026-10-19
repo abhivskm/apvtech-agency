@@ -317,6 +317,11 @@ async function seedNavigation() {
 }
 
 async function main() {
+  // Used by the deploy build: seed a brand-new database once, never touch one that already has content.
+  if (process.env.SEED_ONLY_IF_EMPTY === "true" && (await db.siteSettings.count()) > 0) {
+    console.log("Database already initialised — skipping seed.");
+    return;
+  }
   console.log(FORCE ? "Seeding (FORCE: resetting seeded records)…" : "Seeding (create-missing only)…");
   await seedMedia();
   await seedSettings();
