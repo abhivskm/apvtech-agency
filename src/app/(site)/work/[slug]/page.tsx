@@ -85,7 +85,7 @@ export default async function ProjectPage({ params }: Props) {
                   <dt className="text-muted">Services</dt>
                   <dd className="mt-2 flex flex-wrap gap-2">
                     {services.map((s) => (
-                      <Link key={s.service.slug} href={`/services/${s.service.slug}`} className="chip !min-h-8 !py-1 text-sm">
+                      <Link key={s.service.slug} href={`/services/${s.service.slug}`} className="chip min-h-8! py-1! text-sm">
                         {s.service.title}
                       </Link>
                     ))}

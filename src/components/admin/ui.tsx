@@ -101,7 +101,7 @@ export function SearchFilters({
   return (
     <form method="get" className="mb-4 flex flex-wrap items-end gap-2" role="search">
       {Object.entries(hidden).map(([k, v]) => (v ? <input key={k} type="hidden" name={k} value={v} /> : null))}
-      <div className="relative min-w-[220px] flex-1">
+      <div className="relative min-w-55 flex-1">
         <label htmlFor="q" className="sr-only">
           Search
         </label>
@@ -113,7 +113,7 @@ export function SearchFilters({
           <label htmlFor={`f-${f.name}`} className="sr-only">
             {f.label}
           </label>
-          <select id={`f-${f.name}`} name={f.name} defaultValue={f.value ?? ""} className="a-input min-w-[150px]">
+          <select id={`f-${f.name}`} name={f.name} defaultValue={f.value ?? ""} className="a-input min-w-37.5">
             <option value="">{f.label}: all</option>
             {f.options.map((o) => (
               <option key={o.value} value={o.value}>

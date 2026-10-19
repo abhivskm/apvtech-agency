@@ -55,10 +55,10 @@ export function Analytics({ gaId, gtmId, consentEnabled, consentMessage }: Props
         <div role="region" aria-label="Cookie consent" className="fixed bottom-4 left-4 right-4 z-50 max-w-md border border-line bg-surface p-5 shadow-2xl sm:right-auto">
           <p className="text-sm text-ink/90">{consentMessage}</p>
           <div className="mt-4 flex gap-2">
-            <button type="button" onClick={() => choose("granted")} className="btn btn-primary !min-h-10 !py-2 text-sm">
+            <button type="button" onClick={() => choose("granted")} className="btn btn-primary min-h-10! py-2! text-sm">
               Accept
             </button>
-            <button type="button" onClick={() => choose("denied")} className="btn btn-ghost !min-h-10 !py-2 text-sm">
+            <button type="button" onClick={() => choose("denied")} className="btn btn-ghost min-h-10! py-2! text-sm">
               Decline
             </button>
           </div>

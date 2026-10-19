@@ -15,7 +15,7 @@ export default async function UsersAdmin() {
       <PageHeader title="Users & Permissions" description="Permissions are enforced on the server for every page and action — hiding menu items is not relied upon." />
       <div className="space-y-5">
         <div className="a-card overflow-x-auto">
-          <table className="a-table min-w-[720px]">
+          <table className="a-table min-w-180">
             <thead>
               <tr>
                 <th>User</th>

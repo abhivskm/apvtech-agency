@@ -55,7 +55,7 @@ export default async function ArticlePage({ params }: Props) {
             <div className="col-span-12 lg:col-span-9">
               <p className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
                 {a.category && (
-                  <Link href={`/insights?category=${a.category.slug}`} className="chip !min-h-8 !py-1">
+                  <Link href={`/insights?category=${a.category.slug}`} className="chip min-h-8! py-1!">
                     {a.category.name}
                   </Link>
                 )}

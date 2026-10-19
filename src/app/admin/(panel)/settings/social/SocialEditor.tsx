@@ -30,7 +30,7 @@ export function SocialEditor({ initial }: { initial: Item[] }) {
                 ))}
               </select>
               <input className="a-input w-36" value={it.label} aria-label="Label" onChange={(e) => patch(it.id, { label: e.target.value })} />
-              <div className="min-w-[200px] flex-1">
+              <div className="min-w-50 flex-1">
                 <input className="a-input" value={it.url} placeholder="https://instagram.com/yourbrand" aria-label="Profile URL" aria-invalid={form.errors[`items.${i}.url`] ? true : undefined} onChange={(e) => patch(it.id, { url: e.target.value })} />
                 {form.errors[`items.${i}.url`] && <p className="a-error">{form.errors[`items.${i}.url`]}</p>}
               </div>

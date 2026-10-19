@@ -20,7 +20,7 @@ export function PlanCards({ plans, pricingNote, compact = false }: { plans: Plan
               <span className="absolute -top-3 left-6 rounded-full bg-accent px-3 py-1 font-display text-xs font-medium text-on-accent">{plan.badge}</span>
             )}
             <h3 className="t-h3">{plan.name}</h3>
-            {plan.tagline && <p className="mt-2 text-muted xl:min-h-[3.25rem]">{plan.tagline}</p>}
+            {plan.tagline && <p className="mt-2 text-muted xl:min-h-13">{plan.tagline}</p>}
 
             <div className="mt-7 border-t border-line pt-6">
               <p className="text-sm text-muted">{plan.pricePrefix}</p>

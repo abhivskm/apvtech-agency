@@ -29,7 +29,7 @@ export default async function ActivityLog({ searchParams }: { searchParams: Prom
         <EmptyState title="No activity recorded" />
       ) : (
         <div className="a-card overflow-x-auto">
-          <table className="a-table min-w-[700px]">
+          <table className="a-table min-w-175">
             <thead>
               <tr>
                 <th>When</th>

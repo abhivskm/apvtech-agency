@@ -60,11 +60,11 @@ export function NavEditor({
                     {open === it.id ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                   </button>
                 )}
-                <div className="min-w-[140px] flex-1">
+                <div className="min-w-35 flex-1">
                   <input className="a-input" value={it.label} aria-label="Label" placeholder="Label" aria-invalid={err(i, "label") ? true : undefined} onChange={(e) => patch(it.id, { label: e.target.value })} />
                   {err(i, "label") && <p className="a-error">{err(i, "label")}</p>}
                 </div>
-                <div className="min-w-[180px] flex-1">
+                <div className="min-w-45 flex-1">
                   <input className="a-input font-mono text-xs" list="nav-suggestions" value={it.href} aria-label="Destination" placeholder="/page or https://" aria-invalid={err(i, "href") ? true : undefined} onChange={(e) => patch(it.id, { href: e.target.value })} />
                   {err(i, "href") && <p className="a-error">{err(i, "href")}</p>}
                 </div>
@@ -83,8 +83,8 @@ export function NavEditor({
                   <p className="text-xs text-zinc-500">Dropdown items ({it.children.length})</p>
                   {it.children.map((c, ci) => (
                     <div key={c.id} className="flex flex-wrap gap-2">
-                      <input className="a-input min-w-[140px] flex-1" value={c.label} aria-label="Child label" onChange={(e) => patch(it.id, { children: it.children.map((x) => (x.id === c.id ? { ...x, label: e.target.value } : x)) })} />
-                      <input className="a-input min-w-[180px] flex-1 font-mono text-xs" list="nav-suggestions" value={c.href} aria-label="Child destination" aria-invalid={err(i, "href", ci) ? true : undefined} onChange={(e) => patch(it.id, { children: it.children.map((x) => (x.id === c.id ? { ...x, href: e.target.value } : x)) })} />
+                      <input className="a-input min-w-35 flex-1" value={c.label} aria-label="Child label" onChange={(e) => patch(it.id, { children: it.children.map((x) => (x.id === c.id ? { ...x, label: e.target.value } : x)) })} />
+                      <input className="a-input min-w-45 flex-1 font-mono text-xs" list="nav-suggestions" value={c.href} aria-label="Child destination" aria-invalid={err(i, "href", ci) ? true : undefined} onChange={(e) => patch(it.id, { children: it.children.map((x) => (x.id === c.id ? { ...x, href: e.target.value } : x)) })} />
                       <button type="button" className="a-btn a-btn-ghost a-btn-sm" disabled={ci === 0} aria-label="Move up" onClick={() => { const ch = [...it.children]; [ch[ci - 1], ch[ci]] = [ch[ci], ch[ci - 1]]; patch(it.id, { children: ch }); }}>
                         ↑
                       </button>

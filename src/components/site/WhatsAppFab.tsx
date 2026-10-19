@@ -11,7 +11,7 @@ export function WhatsAppFab({ href }: { href: string }) {
       aria-label="Chat with us on WhatsApp (opens WhatsApp)"
     >
       <WhatsAppIcon className="h-6 w-6" />
-      <span className="hidden max-w-0 overflow-hidden whitespace-nowrap font-display text-sm font-medium transition-[max-width] duration-500 group-hover:max-w-[120px] group-focus-visible:max-w-[120px] sm:inline">
+      <span className="hidden max-w-0 overflow-hidden whitespace-nowrap font-display text-sm font-medium transition-[max-width] duration-500 group-hover:max-w-30 group-focus-visible:max-w-30 sm:inline">
         WhatsApp us
       </span>
     </a>

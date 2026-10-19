@@ -119,7 +119,7 @@ export function ServiceIndex({ groups }: { groups: ServiceGroup[] }) {
         <div
           ref={previewRef}
           aria-hidden
-          className="pointer-events-none absolute left-0 top-0 z-10 hidden aspect-[4/5] w-[22vw] max-w-[340px] lg:block"
+          className="pointer-events-none absolute left-0 top-0 z-10 hidden aspect-[4/5] w-[22vw] max-w-85 lg:block"
         >
           {groups.map((g, i) =>
             g.image ? (

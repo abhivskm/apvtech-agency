@@ -21,7 +21,7 @@ export function RichTextEditor({ value, onChange, label, id }: { value: string; 
       Image.configure({ inline: false }),
     ],
     content: value || "<p></p>",
-    editorProps: { attributes: { class: "a-prose min-h-[220px] px-3 py-2", "aria-label": label, role: "textbox", "aria-multiline": "true", ...(id ? { id } : {}) } },
+    editorProps: { attributes: { class: "a-prose min-h-55 px-3 py-2", "aria-label": label, role: "textbox", "aria-multiline": "true", ...(id ? { id } : {}) } },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
   });
 
@@ -48,7 +48,7 @@ export function RichTextEditor({ value, onChange, label, id }: { value: string; 
         : null,
   });
 
-  if (!editor) return <div className="a-input min-h-[260px] animate-pulse bg-zinc-50" />;
+  if (!editor) return <div className="a-input min-h-65 animate-pulse bg-zinc-50" />;
 
   const btn = (active: boolean | undefined, onClick: () => void, title: string, Icon: React.ComponentType<{ className?: string }>) => (
     <button type="button" title={title} aria-label={title} aria-pressed={active} onClick={onClick} className={`rounded p-1.5 ${active ? "bg-zinc-900 text-white" : "text-zinc-700 hover:bg-zinc-200"}`}>

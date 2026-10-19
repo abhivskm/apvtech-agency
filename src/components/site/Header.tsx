@@ -174,7 +174,7 @@ export function Header({ logo, items, cta, whatsappHref }: Props) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link href={cta.href} className="btn btn-primary hidden !min-h-[42px] !py-2 sm:inline-flex">
+          <Link href={cta.href} className="btn btn-primary hidden min-h-10.5! py-2! sm:inline-flex">
             {cta.label}
             <ArrowUpRight className="btn-arrow h-4 w-4" aria-hidden />
           </Link>

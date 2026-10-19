@@ -49,7 +49,7 @@ export function BrandingForm({ initial }: { initial: Values }) {
                   {label}
                 </label>
                 <div className="flex gap-2">
-                  <input type="color" value={/^#[0-9a-f]{6}$/i.test(colors[k]) ? colors[k] : "#000000"} onChange={(e) => setColor(k, e.target.value.toUpperCase())} className="h-[38px] w-12 cursor-pointer rounded border border-zinc-300" aria-label={`${label} picker`} />
+                  <input type="color" value={/^#[0-9a-f]{6}$/i.test(colors[k]) ? colors[k] : "#000000"} onChange={(e) => setColor(k, e.target.value.toUpperCase())} className="h-9.5 w-12 cursor-pointer rounded border border-zinc-300" aria-label={`${label} picker`} />
                   <input id={`c-${k}`} className="a-input font-mono text-xs" value={colors[k]} onChange={(e) => setColor(k, e.target.value)} aria-invalid={form.errors[`colors.${k}`] ? true : undefined} />
                 </div>
                 {form.errors[`colors.${k}`] && <p className="a-error">{form.errors[`colors.${k}`]}</p>}

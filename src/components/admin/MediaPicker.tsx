@@ -106,7 +106,7 @@ export function MediaPickerDialog({
       <div className="flex h-full flex-col">
         <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200 p-3">
           <h2 className="mr-2 text-sm font-semibold">Media library</h2>
-          <div className="relative min-w-[200px] flex-1" role="search">
+          <div className="relative min-w-50 flex-1" role="search">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" aria-hidden />
             <input
               className="a-input pl-8"

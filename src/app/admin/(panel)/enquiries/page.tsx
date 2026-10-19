@@ -73,7 +73,7 @@ export default async function EnquiriesAdmin({ searchParams }: { searchParams: P
         <EmptyState title="No enquiries found" text={total === 0 && !filterQs.toString() ? "When someone submits the contact form, it will appear here." : "Try different filters."} />
       ) : (
         <div className="a-card overflow-x-auto">
-          <table className="a-table min-w-[760px]">
+          <table className="a-table min-w-190">
             <thead>
               <tr>
                 <th>Received</th>
@@ -97,7 +97,7 @@ export default async function EnquiriesAdmin({ searchParams }: { searchParams: P
                     <div className="text-xs font-normal text-zinc-500">{e.email}</div>
                   </td>
                   <td className="text-zinc-600">{e.businessName ?? "—"}</td>
-                  <td className="max-w-[220px] truncate text-xs text-zinc-600">{[e.plan && `Plan: ${e.plan}`, e.services.join(", ")].filter(Boolean).join(" · ") || "—"}</td>
+                  <td className="max-w-55 truncate text-xs text-zinc-600">{[e.plan && `Plan: ${e.plan}`, e.services.join(", ")].filter(Boolean).join(" · ") || "—"}</td>
                   <td>
                     <StatusBadge status={e.status} />
                   </td>

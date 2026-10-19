@@ -316,7 +316,7 @@ function ProcessSection({ d }: { d: Data }) {
           <ol className="grid grid-cols-1 gap-y-10 pt-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10">
             {steps.map((st, i) => (
               <li key={i} className="relative" data-reveal style={{ ["--reveal-delay" as string]: `${i * 140}ms` }}>
-                <span className="absolute -top-[2.65rem] left-0 h-3 w-3 rounded-full border border-accent bg-bg" aria-hidden />
+                <span className="absolute top-[-2.65rem] left-0 h-3 w-3 rounded-full border border-accent bg-bg" aria-hidden />
                 <p className="font-display text-sm text-muted">Stage {String(i + 1).padStart(2, "0")}</p>
                 <h3 className="t-h2 mt-3">{st.title}</h3>
                 {st.text && <p className="mt-4 max-w-[34ch] text-[0.9375rem] text-muted">{st.text}</p>}
@@ -340,7 +340,7 @@ async function IndustriesSection({ d }: { d: Data }) {
         <SectionHeading eyebrow={s(d, "eyebrow")} heading={s(d, "heading")} description={s(d, "description")} />
         <div className="mt-16 grid grid-cols-1 gap-px border border-line bg-line md:grid-cols-2 lg:mt-24">
           {industries.map((ind, i) => (
-            <Link key={ind.id} href={`/industries/${ind.slug}`} className="group relative flex min-h-[420px] flex-col justify-between overflow-hidden bg-bg p-6 sm:p-10">
+            <Link key={ind.id} href={`/industries/${ind.slug}`} className="group relative flex min-h-105 flex-col justify-between overflow-hidden bg-bg p-6 sm:p-10">
               {ind.heroMedia && (
                 <Image
                   src={ind.heroMedia.url}
@@ -668,12 +668,12 @@ function CtaSection({ d, ctx }: { d: Data; ctx: Ctx }) {
             )}
             <div className="col-span-12 flex flex-wrap items-start gap-3 lg:col-span-6 lg:col-start-7 lg:justify-end" data-reveal>
               {primary && (
-                <Link href={primary.href} className="btn btn-primary !min-h-14 !px-7 text-lg">
+                <Link href={primary.href} className="btn btn-primary min-h-14! px-7! text-lg">
                   {primary.label} <ArrowUpRight className="btn-arrow h-5 w-5" aria-hidden />
                 </Link>
               )}
               {wa && (
-                <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-ghost !min-h-14 !px-7 text-lg">
+                <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-ghost min-h-14! px-7! text-lg">
                   <WhatsAppIcon className="h-5 w-5" /> WhatsApp Us
                 </a>
               )}

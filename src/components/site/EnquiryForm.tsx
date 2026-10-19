@@ -140,7 +140,7 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
       </div>
 
       {/* Honeypot (hidden from people and assistive tech) */}
-      <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+      <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
         <label htmlFor="f-company_url">Company URL</label>
         <input id="f-company_url" name="company_url" type="text" tabIndex={-1} autoComplete="off" />
       </div>
@@ -259,7 +259,7 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
           <input
             name="consent"
             type="checkbox"
-            className="mt-1 h-5 w-5 shrink-0 accent-[var(--brand-accent)]"
+            className="mt-1 h-5 w-5 shrink-0 accent-accent"
             aria-invalid={errors.consent ? true : undefined}
             aria-describedby={errors.consent ? "e-consent" : undefined}
           />
@@ -275,7 +275,7 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
       </div>
 
       <div className="flex flex-wrap items-center gap-4 pt-2">
-        <button type="submit" className="btn btn-primary !min-h-14 !px-8 text-lg disabled:opacity-60" disabled={pending}>
+        <button type="submit" className="btn btn-primary min-h-14! px-8! text-lg disabled:opacity-60" disabled={pending}>
           {pending ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> Sending…
