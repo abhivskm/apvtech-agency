@@ -7,6 +7,7 @@ import {
   getPublishedArticles,
   getPublishedFaqs,
   getPublishedIndustries,
+  getPublishedPlans,
   getPublishedProjects,
   getPublishedServices,
   getPublishedTestimonials,
@@ -25,6 +26,7 @@ import { HeroSignature } from "@/components/site/HeroSignature";
 import { ServiceIndex, type ServiceGroup } from "@/components/site/ServiceIndex";
 import { ArticleCard, Lines, MediaImage, ProjectCard, RichText, SectionHeading } from "@/components/site/ui";
 import { WhatsAppIcon } from "@/components/site/icons";
+import { PlanCards } from "@/components/site/PlanCards";
 
 type Data = Record<string, unknown>;
 type Ctx = { settings: Settings; media: Record<string, Media>; isFirst: boolean; updatedAt?: Date };
@@ -92,6 +94,8 @@ async function Section({ type, data, ctx }: { type: string; data: Data; ctx: Ctx
       return <TestimonialsSection d={data} />;
     case "insights":
       return <InsightsSection d={data} />;
+    case "plans":
+      return <PlansSection d={data} ctx={ctx} />;
     case "cta":
       return <CtaSection d={data} ctx={ctx} />;
     case "richText":
@@ -499,6 +503,28 @@ async function InsightsSection({ d }: { d: Data }) {
               <ArticleCard article={a} />
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── Plans ───────────────────────── */
+
+async function PlansSection({ d, ctx }: { d: Data; ctx: Ctx }) {
+  const plans = await getPublishedPlans();
+  if (!plans.length) return null;
+  return (
+    <section className="section" id="plans">
+      <div className="wrap">
+        <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+          <SectionHeading eyebrow={s(d, "eyebrow")} heading={s(d, "heading")} description={s(d, "description")} className="flex-1" />
+          <Link href="/pricing" className="btn btn-ghost self-start lg:self-end">
+            Compare plans <ArrowUpRight className="btn-arrow h-4 w-4" aria-hidden />
+          </Link>
+        </div>
+        <div className="mt-16">
+          <PlanCards plans={plans} pricingNote={ctx.settings.pricingNote} compact />
         </div>
       </div>
     </section>

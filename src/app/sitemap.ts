@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const settings = await getSettings();
   const u = (p: string) => absoluteUrl(p, settings);
 
-  const systemPages = ["home", "services", "work", "industries", "about", "insights", "contact", "privacy-policy", "terms-and-conditions"];
+  const systemPages = ["home", "services", "work", "industries", "pricing", "about", "insights", "contact", "privacy-policy", "terms-and-conditions"];
   const pagePaths: Record<string, string> = { home: "/" };
   const system = await Promise.all(systemPages.map((slug) => getPublishedPage(slug)));
   const entries: MetadataRoute.Sitemap = system

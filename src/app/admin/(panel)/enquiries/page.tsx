@@ -79,7 +79,7 @@ export default async function EnquiriesAdmin({ searchParams }: { searchParams: P
                 <th>Received</th>
                 <th>Name</th>
                 <th>Business</th>
-                <th>Services</th>
+                <th>Plan / services</th>
                 <th>Status</th>
                 <th>Assigned</th>
                 <th>Email</th>
@@ -97,7 +97,7 @@ export default async function EnquiriesAdmin({ searchParams }: { searchParams: P
                     <div className="text-xs font-normal text-zinc-500">{e.email}</div>
                   </td>
                   <td className="text-zinc-600">{e.businessName ?? "—"}</td>
-                  <td className="max-w-[200px] truncate text-xs text-zinc-600">{e.services.join(", ") || "—"}</td>
+                  <td className="max-w-[220px] truncate text-xs text-zinc-600">{[e.plan && `Plan: ${e.plan}`, e.services.join(", ")].filter(Boolean).join(" · ") || "—"}</td>
                   <td>
                     <StatusBadge status={e.status} />
                   </td>

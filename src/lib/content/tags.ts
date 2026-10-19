@@ -11,6 +11,7 @@ export const TAGS = {
   articles: "articles",
   testimonials: "testimonials",
   faqs: "faqs",
+  plans: "plans",
   media: "media",
   redirects: "redirects",
 } as const;

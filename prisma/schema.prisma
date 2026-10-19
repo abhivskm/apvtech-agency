@@ -174,6 +174,8 @@ model SiteSettings {
   consentMessage      String  @default("We use cookies for analytics only after you agree.")
   googleBusinessUrl   String?
   enquiryRetentionDays Int    @default(730)
+  /// Shown under prices on the pricing page, e.g. "+ 18% GST".
+  pricingNote         String  @default("Prices exclude 18% GST.")
   updatedAt           DateTime @updatedAt
 }
 
@@ -527,6 +529,39 @@ model Faq {
   @@index([serviceId])
 }
 
+// ─────────────────────────────── Plans ───────────────────────────────
+
+/// Client packages shown on /pricing. Prices are whole rupees, exclusive of tax; null = not applicable.
+model Plan {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  name          String
+  tagline       String        @default("")
+  bestFor       String        @default("")
+  description   String        @default("")
+  /// One-time setup / project fee (₹). Null when the plan has no setup fee.
+  setupPrice    Int?
+  /// Recurring monthly fee (₹). Null when the plan has no monthly fee.
+  monthlyPrice  Int?
+  /// Shown before the price, e.g. "Starting from". Leave both prices empty for "Custom quote".
+  pricePrefix   String        @default("Starting from")
+  /// Optional line such as "Everything in Growth, plus:" shown above the feature list.
+  includesLabel String?
+  features      String[]      @default([])
+  /// Optional notes such as "Ad spend paid directly to Google/Meta".
+  notes         String[]      @default([])
+  highlighted   Boolean       @default(false)
+  badge         String?
+  ctaLabel      String        @default("Choose this plan")
+  order         Int           @default(0)
+  status        ContentStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([status, order])
+}
+
 // ─────────────────────────────── Leads ───────────────────────────────
 
 model Enquiry {
@@ -544,6 +579,8 @@ model Enquiry {
   consent       Boolean
   consentAt     DateTime?
   sourcePath    String?
+  /// Plan selected on the pricing page / contact form (plan name at the time of enquiry).
+  plan          String?
   status        EnquiryStatus @default(NEW)
   readAt        DateTime?
   assigneeId    String?

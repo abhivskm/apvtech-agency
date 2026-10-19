@@ -17,11 +17,11 @@ export async function GET(req: Request) {
   const filters = Object.fromEntries(["q", "status", "assignee", "from", "to"].map((k) => [k, url.searchParams.get(k) ?? undefined]));
   const rows = await db.enquiry.findMany({ where: enquiryWhere(filters), orderBy: { createdAt: "desc" }, take: 10_000, include: { assignee: { select: { name: true } } } });
 
-  const header = ["Received", "Status", "Name", "Business", "Email", "Phone", "Website", "Industry", "Services", "Budget", "Timeline", "Message", "Consent at", "Assigned to", "Source"];
+  const header = ["Received", "Status", "Name", "Business", "Email", "Phone", "Website", "Industry", "Plan", "Services", "Budget", "Timeline", "Message", "Consent at", "Assigned to", "Source"];
   const lines = [header.map(cell).join(",")];
   for (const e of rows) {
     lines.push(
-      [e.createdAt, e.status, e.name, e.businessName, e.email, e.phone, e.website, e.industry, e.services.join("; "), e.budget, e.timeline, e.message, e.consentAt, e.assignee?.name, e.sourcePath]
+      [e.createdAt, e.status, e.name, e.businessName, e.email, e.phone, e.website, e.industry, e.plan, e.services.join("; "), e.budget, e.timeline, e.message, e.consentAt, e.assignee?.name, e.sourcePath]
         .map(cell)
         .join(","),
     );

@@ -284,6 +284,23 @@ export async function getArticleForPreview(slug: string) {
   return db.article.findUnique({ where: { slug }, include: articleInclude });
 }
 
+/* ───────────── Plans ───────────── */
+
+export const getPublishedPlans = cached(
+  async () =>
+    db.plan.findMany({
+      where: publishedWhere(),
+      orderBy: { order: "asc" },
+      select: {
+        id: true, slug: true, name: true, tagline: true, bestFor: true, description: true, setupPrice: true, monthlyPrice: true,
+        pricePrefix: true, includesLabel: true, features: true, notes: true, highlighted: true, badge: true, ctaLabel: true,
+      },
+    }),
+  "plans",
+  [TAGS.plans],
+);
+export type PlanCard = Awaited<ReturnType<typeof getPublishedPlans>>[number];
+
 /* ───────────── Social proof ───────────── */
 
 export const getPublishedTestimonials = cached(

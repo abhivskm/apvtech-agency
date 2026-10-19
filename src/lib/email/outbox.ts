@@ -25,6 +25,7 @@ export async function queueEnquiryNotification(enquiry: Enquiry, brandName: stri
     `Phone / WhatsApp: ${enquiry.phone}`,
     `Website: ${enquiry.website ?? "—"}`,
     `Industry: ${enquiry.industry ?? "—"}`,
+    `Plan: ${enquiry.plan ?? "—"}`,
     `Services: ${enquiry.services.join(", ") || "—"}`,
     `Budget: ${enquiry.budget ?? "—"}`,
     `Timeline: ${enquiry.timeline ?? "—"}`,

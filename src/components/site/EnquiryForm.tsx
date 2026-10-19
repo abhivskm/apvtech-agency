@@ -8,20 +8,27 @@ import { BUDGET_OPTIONS, INDUSTRY_OPTIONS, TIMELINE_OPTIONS, enquirySchema } fro
 import { submitEnquiry } from "@/app/(site)/contact/actions";
 import { WhatsAppIcon } from "@/components/site/icons";
 
-type Props = { services: { slug: string; title: string }[]; whatsappHref: string | null; preselected?: string | null };
+type Props = {
+  services: { slug: string; title: string }[];
+  plans?: { slug: string; name: string }[];
+  whatsappHref: string | null;
+  preselected?: string | null;
+  preselectedPlan?: string | null;
+};
 type Errors = Record<string, string>;
 
 /**
- * Reads ?service=<slug> in the browser so service pages can link here with that service preselected,
+ * Reads ?service=<slug> and ?plan=<slug> in the browser so service pages can link here with that service preselected,
  * while the contact page itself stays statically cacheable. Render inside <Suspense>.
  */
-export function EnquiryFormWithQuery(props: Omit<Props, "preselected">) {
-  const slug = useSearchParams().get("service");
-  const preselected = props.services.find((s) => s.slug === slug)?.title ?? null;
-  return <EnquiryForm {...props} preselected={preselected} />;
+export function EnquiryFormWithQuery(props: Omit<Props, "preselected" | "preselectedPlan">) {
+  const params = useSearchParams();
+  const preselected = props.services.find((s) => s.slug === params.get("service"))?.title ?? null;
+  const preselectedPlan = props.plans?.find((p) => p.slug === params.get("plan"))?.name ?? null;
+  return <EnquiryForm {...props} preselected={preselected} preselectedPlan={preselectedPlan} />;
 }
 
-export function EnquiryForm({ services, whatsappHref, preselected = null }: Props) {
+export function EnquiryForm({ services, plans = [], whatsappHref, preselected = null, preselectedPlan = null }: Props) {
   const [errors, setErrors] = useState<Errors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -30,6 +37,10 @@ export function EnquiryForm({ services, whatsappHref, preselected = null }: Prop
   useEffect(() => {
     if (preselected) setSelected((cur) => (cur.includes(preselected) ? cur : [...cur, preselected]));
   }, [preselected]);
+  const [plan, setPlan] = useState(preselectedPlan ?? "");
+  useEffect(() => {
+    if (preselectedPlan) setPlan(preselectedPlan);
+  }, [preselectedPlan]);
   const startedAt = useRef<number>(0);
   const formRef = useRef<HTMLFormElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
@@ -51,6 +62,7 @@ export function EnquiryForm({ services, whatsappHref, preselected = null }: Prop
       website: String(fd.get("website") ?? ""),
       industry: String(fd.get("industry") ?? ""),
       services: selected,
+      plan,
       budget: String(fd.get("budget") ?? ""),
       timeline: String(fd.get("timeline") ?? ""),
       message: String(fd.get("message") ?? ""),
@@ -181,6 +193,22 @@ export function EnquiryForm({ services, whatsappHref, preselected = null }: Prop
           </select>
         </div>
       </div>
+
+      {plans.length > 0 && (
+        <div>
+          <label htmlFor="f-plan" className="field-label">
+            Plan you&apos;re interested in
+          </label>
+          <select id="f-plan" name="plan" className="field-input" value={plan} onChange={(e) => setPlan(e.target.value)}>
+            <option value="">Not sure yet — recommend one</option>
+            {plans.map((p) => (
+              <option key={p.slug} value={p.name}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <fieldset>
         <legend className="field-label">Services you&apos;re interested in</legend>

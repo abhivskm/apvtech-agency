@@ -16,6 +16,7 @@ export const PERMISSIONS = {
   "articles.manage": ["SUPER_ADMIN", "EDITOR", "MARKETING"],
   "testimonials.manage": ["SUPER_ADMIN", "EDITOR", "MARKETING"],
   "faqs.manage": ["SUPER_ADMIN", "EDITOR", "MARKETING"],
+  "plans.manage": ["SUPER_ADMIN", "MARKETING"],
   "media.manage": ["SUPER_ADMIN", "EDITOR", "MARKETING"],
   "leads.view": ["SUPER_ADMIN", "MARKETING"],
   "leads.manage": ["SUPER_ADMIN", "MARKETING"],

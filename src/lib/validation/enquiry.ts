@@ -39,6 +39,7 @@ export const enquirySchema = z.object({
     .refine((v) => !v || /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(v), "Please enter a valid website address"),
   industry: z.string().trim().max(80).optional().default(""),
   services: z.array(z.string().trim().max(80)).max(15).default([]),
+  plan: z.string().trim().max(60).optional().default(""),
   budget: z.string().trim().max(60).optional().default(""),
   timeline: z.string().trim().max(60).optional().default(""),
   message: z.string().trim().min(10, "Tell us a little about your project (10+ characters)").max(4000),

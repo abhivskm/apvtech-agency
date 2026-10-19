@@ -14,6 +14,6 @@ export const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 /** Slugs reserved by dedicated routes – CMS pages may not use them. */
 export const RESERVED_PAGE_SLUGS = new Set([
   "admin", "api", "services", "work", "industries", "insights", "contact", "about",
-  "privacy-policy", "terms-and-conditions", "uploads", "sitemap.xml", "robots.txt", "home",
+  "privacy-policy", "terms-and-conditions", "pricing", "uploads", "sitemap.xml", "robots.txt", "home",
   "_next", "preview", "404",
 ]);

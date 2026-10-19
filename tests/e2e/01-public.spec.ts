@@ -21,6 +21,7 @@ const ROUTES = [
   "/industries/startups",
   "/industries/ecommerce",
   "/industries/restaurants-hospitality",
+  "/pricing",
   "/about",
   "/insights",
   "/insights/what-a-small-business-website-needs",
@@ -120,6 +121,17 @@ test("portfolio filter narrows projects and updates the URL", async ({ page }) =
   expect(filtered).toBeLessThan(all);
   await page.goto("/work?category=branding");
   await expect(cards).toHaveCount(filtered);
+});
+
+test("pricing page lists plans and preselects a plan on the contact form", async ({ page }) => {
+  await page.goto("/pricing");
+  const choose = page.getByRole("link", { name: /Choose Growth/ });
+  await expect(choose).toBeVisible();
+  await expect(page.getByText("₹49,999").first()).toBeVisible();
+  await expect(page.getByText(/GST/).first()).toBeVisible();
+  await choose.click();
+  await expect(page).toHaveURL(/\/contact\?plan=growth/);
+  await expect(page.locator("#f-plan")).toHaveValue("Growth");
 });
 
 test("enquiry form validates and submits", async ({ page }) => {

@@ -17,6 +17,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       { label: "Blog / Insights", href: "/admin/articles", permission: "articles.manage", icon: "Newspaper" },
       { label: "Testimonials", href: "/admin/testimonials", permission: "testimonials.manage", icon: "Quote" },
       { label: "FAQs", href: "/admin/faqs", permission: "faqs.manage", icon: "HelpCircle" },
+      { label: "Plans & Pricing", href: "/admin/plans", permission: "plans.manage", icon: "Tag" },
       { label: "Media Library", href: "/admin/media", permission: "media.manage", icon: "Image" },
     ],
   },

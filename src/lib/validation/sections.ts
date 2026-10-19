@@ -142,6 +142,16 @@ export const SECTION_TYPES = {
     ],
     defaults: { heading: "What clients say" },
   },
+  plans: {
+    label: "Plans & pricing",
+    description: "Published plans from Admin → Plans & Pricing, with a link to the full pricing page.",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", kind: "text", max: 80 },
+      { name: "heading", label: "Heading", kind: "textarea", required: true, max: 160 },
+      { name: "description", label: "Description", kind: "textarea", max: 400 },
+    ],
+    defaults: { heading: "Plans" },
+  },
   insights: {
     label: "Latest insights",
     description: "Most recent published articles.",

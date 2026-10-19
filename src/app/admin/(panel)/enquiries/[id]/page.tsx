@@ -30,6 +30,7 @@ export default async function EnquiryDetail({ params }: { params: Promise<{ id: 
     ["Business", e.businessName ?? "—"],
     ["Website", e.website ? <a href={e.website} target="_blank" rel="noopener noreferrer nofollow" className="text-blue-700 underline">{e.website}</a> : "—"],
     ["Industry", e.industry ?? "—"],
+    ["Plan", e.plan ?? "—"],
     ["Services", e.services.join(", ") || "—"],
     ["Budget", e.budget ?? "—"],
     ["Timeline", e.timeline ?? "—"],

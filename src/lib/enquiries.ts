@@ -57,6 +57,7 @@ export async function createEnquiry(input: unknown, meta: { ipHash: string; now?
       website,
       industry: data.industry || null,
       services: data.services,
+      plan: data.plan || null,
       budget: data.budget || null,
       timeline: data.timeline || null,
       message: data.message,

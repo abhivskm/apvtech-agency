@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
-import { getPublishedServices, getSettings } from "@/lib/content/queries";
+import { getPublishedPlans, getPublishedServices, getSettings } from "@/lib/content/queries";
 import { whatsappLink } from "@/lib/whatsapp";
 import { loadPage, pageMetadata, splitSections } from "@/components/site/CmsPage";
 import { SectionRenderer } from "@/components/site/sections";
@@ -16,11 +16,12 @@ export function generateMetadata() {
 export const revalidate = 300;
 
 export default async function ContactPage() {
-  const [page, settings, services] = await Promise.all([loadPage("contact"), getSettings(), getPublishedServices()]);
+  const [page, settings, services, plans] = await Promise.all([loadPage("contact"), getSettings(), getPublishedServices(), getPublishedPlans()]);
   if (!settings) notFound();
   const { head, tail } = splitSections(page?.sections ?? []);
   const wa = whatsappLink(settings.whatsappNumber, settings.whatsappMessage);
   const serviceOptions = services.map((s) => ({ slug: s.slug, title: s.title }));
+  const planOptions = plans.map((p) => ({ slug: p.slug, name: p.name }));
   const hasDirect = settings.contactEmail || settings.phone || wa || settings.address;
 
   return (
@@ -33,8 +34,8 @@ export default async function ContactPage() {
           </div>
           <div className="grid-12 gap-y-16">
             <div className="col-span-12 lg:col-span-7">
-              <Suspense fallback={<EnquiryForm services={serviceOptions} whatsappHref={wa} />}>
-                <EnquiryFormWithQuery services={serviceOptions} whatsappHref={wa} />
+              <Suspense fallback={<EnquiryForm services={serviceOptions} plans={planOptions} whatsappHref={wa} />}>
+                <EnquiryFormWithQuery services={serviceOptions} plans={planOptions} whatsappHref={wa} />
               </Suspense>
             </div>
             <aside className="col-span-12 lg:col-span-4 lg:col-start-9" aria-label="Other ways to reach us">

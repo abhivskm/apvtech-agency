@@ -8,7 +8,7 @@ import type { ActionResult } from "@/lib/admin/action";
 import { logActivity } from "@/lib/audit";
 import { refresh } from "@/lib/content/revalidate";
 
-const ENTITY = z.enum(["service", "project", "industry", "article", "page", "testimonial", "faq"]);
+const ENTITY = z.enum(["service", "project", "industry", "article", "page", "testimonial", "faq", "plan"]);
 type Entity = z.infer<typeof ENTITY>;
 
 const PERMS: Record<Entity, Permission> = {
@@ -19,8 +19,9 @@ const PERMS: Record<Entity, Permission> = {
   page: "pages.manage",
   testimonial: "testimonials.manage",
   faq: "faqs.manage",
+  plan: "plans.manage",
 };
-const LABEL: Record<Entity, string> = { service: "Service", project: "Project", industry: "Industry", article: "Article", page: "Page", testimonial: "Testimonial", faq: "FAQ" };
+const LABEL: Record<Entity, string> = { service: "Service", project: "Project", industry: "Industry", article: "Article", page: "Page", testimonial: "Testimonial", faq: "FAQ", plan: "Plan" };
 
 async function guard(entity: unknown) {
   const e = ENTITY.parse(entity);
@@ -47,6 +48,7 @@ export async function reorderItems(entity: Entity, ids: string[]): Promise<Actio
           case "industry": return db.industry.update({ where: { id }, data: { order } });
           case "testimonial": return db.testimonial.update({ where: { id }, data: { order } });
           case "faq": return db.faq.update({ where: { id }, data: { order } });
+          case "plan": return db.plan.update({ where: { id }, data: { order } });
           default: throw new Error("Not sortable");
         }
       }),
@@ -78,6 +80,7 @@ export async function setItemStatus(entity: Entity, id: string, status: "DRAFT" 
       }
       case "testimonial": await db.testimonial.update({ where: { id }, data: { status: s } }); break;
       case "faq": await db.faq.update({ where: { id }, data: { status: s } }); break;
+      case "plan": await db.plan.update({ where: { id }, data: { status: s, ...(await pub(await db.plan.findUnique({ where: { id } }))) } }); break;
     }
     const verb = s === "PUBLISHED" ? "publish" : s === "ARCHIVED" ? "archive" : "unpublish";
     await logActivity(user, `${e}.${verb}`, LABEL[e], id, `${LABEL[e]} set to ${s.toLowerCase()}`);
@@ -106,6 +109,7 @@ export async function deleteItem(entity: Entity, id: string): Promise<ActionResu
       }
       case "testimonial": name = (await db.testimonial.delete({ where: { id } })).name; break;
       case "faq": name = (await db.faq.delete({ where: { id } })).question; break;
+      case "plan": name = (await db.plan.delete({ where: { id } })).name; break;
     }
     await logActivity(user, `${e}.delete`, LABEL[e], id, `Deleted ${LABEL[e].toLowerCase()} “${name}”`);
     refresh();

@@ -18,7 +18,7 @@ export type ContentRow = {
   deletable?: boolean;
 };
 
-type Entity = "service" | "project" | "industry" | "article" | "page" | "testimonial" | "faq";
+type Entity = "service" | "project" | "industry" | "article" | "page" | "testimonial" | "faq" | "plan";
 
 const STATUS_CLS: Record<string, string> = {
   PUBLISHED: "bg-emerald-50 text-emerald-700 border-emerald-200",

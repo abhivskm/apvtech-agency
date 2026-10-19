@@ -118,6 +118,30 @@ export const articleSchema = z.object({
 });
 export type ArticleInput = z.input<typeof articleSchema>;
 
+const rupees = z.preprocess(
+  (v) => (v === "" || v == null ? null : typeof v === "string" ? v.replace(/[₹,\s]/g, "") : v),
+  z.coerce.number({ error: "Enter a number, e.g. 24999" }).int("Whole rupees only").min(0).max(100_000_000).nullable(),
+);
+
+export const planSchema = z.object({
+  name: reqStr("Plan name", 60),
+  slug,
+  tagline: str(120).default(""),
+  bestFor: str(300).default(""),
+  description: str(600).default(""),
+  setupPrice: rupees,
+  monthlyPrice: rupees,
+  pricePrefix: str(40).default("Starting from"),
+  includesLabel: optStr(80),
+  features: stringList(25, 200),
+  notes: stringList(8, 200),
+  highlighted: z.boolean().default(false),
+  badge: optStr(30),
+  ctaLabel: reqStr("Button text", 40),
+  status,
+});
+export type PlanInput = z.input<typeof planSchema>;
+
 export const pageMetaSchema = z.object({
   title: reqStr("Title", 120),
   slug,
