@@ -340,7 +340,7 @@ async function IndustriesSection({ d }: { d: Data }) {
         <SectionHeading eyebrow={s(d, "eyebrow")} heading={s(d, "heading")} description={s(d, "description")} />
         <div className="mt-16 grid grid-cols-1 gap-px border border-line bg-line md:grid-cols-2 lg:mt-24">
           {industries.map((ind, i) => (
-            <Link key={ind.id} href={`/industries/${ind.slug}`} className="group relative flex min-h-105 flex-col justify-between overflow-hidden bg-bg p-6 sm:p-10">
+            <Link key={ind.id} href={`/industries/${ind.slug}`} className="group relative flex min-h-105 flex-col justify-between overflow-hidden bg-bg p-6 sm:p-10 md:[&:last-child:nth-child(odd)]:col-span-2">
               {ind.heroMedia && (
                 <Image
                   src={ind.heroMedia.url}
@@ -605,7 +605,7 @@ function ComparisonSection({ d, ctx }: { d: Data; ctx: Ctx }) {
                         (ours ? (
                           <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
                         ) : (
-                          <CircleX className={`mt-0.5 h-5 w-5 shrink-0 ${col.style === "none" ? "text-[#ff8a7a]" : "text-muted"}`} aria-hidden />
+                          <CircleX className={`mt-0.5 h-5 w-5 shrink-0 ${col.style === "none" ? "text-(--brand-danger)" : "text-muted"}`} aria-hidden />
                         ))}
                       {text && (
                         <p className={`text-[0.9375rem] ${ours ? "text-ink" : "text-ink/75"}`}>

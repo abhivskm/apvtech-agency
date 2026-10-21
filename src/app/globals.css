@@ -11,9 +11,29 @@
   --brand-accent: #c8f169;
   --brand-border: rgba(255, 255, 255, 0.14);
   --brand-on-accent: #0a0a0a;
+  --brand-danger: #ff8a7a;
+  --brand-danger-text: #ffb1a6;
+  --brand-overlay: rgba(10, 10, 10, 0.72);
+  color-scheme: dark;
   --gutter: clamp(1rem, 4vw, 3.5rem);
   --header-h: 72px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light theme (header toggle). Neutrals are fixed; the readable light accent comes from BrandStyle. */
+:root[data-theme="light"] {
+  --brand-bg: #f7f7f2;
+  --brand-surface: #eeeee7;
+  --brand-elevated: #ffffff;
+  --brand-text: #111110;
+  --brand-muted: #5e5e57;
+  --brand-accent: #4d7c0f;
+  --brand-on-accent: #ffffff;
+  --brand-border: rgba(0, 0, 0, 0.13);
+  --brand-danger: #b42318;
+  --brand-danger-text: #b42318;
+  --brand-overlay: rgba(247, 247, 242, 0.8);
+  color-scheme: light;
 }
 
 @theme inline {
@@ -50,7 +70,13 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
+  transition: background-color .35s var(--ease-out), color .35s var(--ease-out);
 }
+
+/* Theme toggle: show the icon of the theme you'd switch to */
+.theme-toggle .theme-icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .theme-icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .theme-icon-moon { display: block; }
 
 .site ::selection { background: var(--brand-accent); color: var(--brand-on-accent); }
 
@@ -121,7 +147,7 @@ html {
 .tag-concept {
   display: inline-flex; align-items: center; gap: .35rem; padding: .2rem .55rem; border-radius: 999px;
   font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; font-family: var(--font-display);
-  background: rgba(10,10,10,.72); color: var(--brand-text); border: 1px solid var(--brand-border);
+  background: var(--brand-overlay); color: var(--brand-text); border: 1px solid var(--brand-border);
   backdrop-filter: blur(6px);
 }
 
@@ -194,8 +220,8 @@ html.motion-ok .fade-in { animation: fade-in 1s var(--ease-out) both; animation-
 .field-input::placeholder { color: color-mix(in srgb, var(--brand-muted) 70%, transparent); }
 .field-input:hover { border-color: color-mix(in srgb, var(--brand-text) 35%, transparent); }
 .field-input:focus { outline: none; border-color: var(--brand-accent); background: var(--brand-elevated); }
-.field-input[aria-invalid="true"] { border-color: #ff8a7a; }
-.field-error { color: #ffb1a6; font-size: .875rem; margin-top: .4rem; }
+.field-input[aria-invalid="true"] { border-color: var(--brand-danger); }
+.field-error { color: var(--brand-danger-text); font-size: .875rem; margin-top: .4rem; }
 select.field-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath stroke='%23A4A49D' stroke-width='1.5' d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
 
 
@@ -253,4 +279,10 @@ html.motion-ok .progress-line[data-reveal].is-in { transform: scaleX(1); }
   .a-prose ul { list-style: disc; padding-left: 1.3em; } .a-prose ol { list-style: decimal; padding-left: 1.3em; } .a-prose a { color: #2563eb; text-decoration: underline; }
   .a-prose blockquote { border-left: 3px solid #d4d4d8; padding-left: .8em; color: #52525b; }
   .a-prose:focus { outline: none; }
+}
+
+/* Light theme: the hero headline uses mix-blend-difference over the collage. White text under
+   "difference" renders near-black on the light background and inverts over photos, matching dark mode. */
+@media (min-width: 1024px) {
+  :root[data-theme="light"] .hero-blend { color: #ffffff; }
 }

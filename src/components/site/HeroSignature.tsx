@@ -111,7 +111,7 @@ export function HeroSignature({ eyebrow, headline, subheadline, description, pri
   return (
     <section
       ref={rootRef}
-      className="relative isolate flex min-h-[100svh] flex-col overflow-hidden pt-[calc(var(--header-h)+2rem)]"
+      className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-bg pt-[calc(var(--header-h)+2rem)]"
       aria-labelledby="hero-title"
     >
       {/* Collage */}
@@ -182,7 +182,7 @@ export function HeroSignature({ eyebrow, headline, subheadline, description, pri
             {eyebrow}
           </p>
         )}
-        <h1 id="hero-title" className="t-mega relative max-w-[11ch] uppercase lg:mix-blend-difference" aria-label={lines.join(" ")}>
+        <h1 id="hero-title" className="hero-blend t-mega relative max-w-[11ch] uppercase lg:mix-blend-difference" aria-label={lines.join(" ")}>
           {lines.map((line, i) => (
             <span key={i} className="hero-line" aria-hidden>
               <span style={{ ["--i" as string]: i }}>{line}</span>

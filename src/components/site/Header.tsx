@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 
 export type NavLink = { id: string; label: string; href: string; newTab: boolean; children: { id: string; label: string; href: string; newTab: boolean }[] };
 
@@ -102,7 +103,7 @@ export function Header({ logo, items, cta, whatsappHref }: Props) {
         solid ? "border-b border-line bg-bg/85 backdrop-blur-xl" : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="wrap flex h-[var(--header-h)] items-center justify-between gap-6">
+      <div className="wrap flex h-(--header-h) items-center justify-between gap-6">
         <Link href="/" className="relative z-10 shrink-0" aria-label="Home">
           {logo}
         </Link>
@@ -174,6 +175,7 @@ export function Header({ logo, items, cta, whatsappHref }: Props) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle className="relative z-10" />
           <Link href={cta.href} className="btn btn-primary hidden min-h-10.5! py-2! sm:inline-flex">
             {cta.label}
             <ArrowUpRight className="btn-arrow h-4 w-4" aria-hidden />
@@ -201,7 +203,7 @@ export function Header({ logo, items, cta, whatsappHref }: Props) {
         aria-modal="true"
         aria-label="Site menu"
         hidden={!open}
-        className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-40 overflow-y-auto bg-bg lg:hidden"
+        className="fixed inset-x-0 bottom-0 top-(--header-h) z-40 overflow-y-auto bg-bg lg:hidden"
       >
         <nav aria-label="Mobile" className="wrap flex min-h-full flex-col pb-10 pt-6">
           <ul className="border-t border-line">

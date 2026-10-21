@@ -136,7 +136,7 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-7" aria-describedby={formError ? "form-error" : undefined}>
       <div aria-live="assertive" id="form-error">
-        {formError && <p className="border border-[#ff8a7a]/50 bg-[#ff8a7a]/10 px-4 py-3 text-sm text-[#ffd0c9]">{formError}</p>}
+        {formError && <p className="border border-(--brand-danger)/50 bg-(--brand-danger)/10 px-4 py-3 text-sm text-(--brand-danger-text)">{formError}</p>}
       </div>
 
       {/* Honeypot (hidden from people and assistive tech) */}

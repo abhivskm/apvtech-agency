@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { getSettings } from "@/lib/content/queries";
 import { absoluteUrl, siteUrl } from "@/lib/seo";
 import { applyBrand, DEFAULT_BRAND } from "@/lib/brand";
+import { themeBootstrap } from "@/lib/theme";
 import "./globals.css";
 
 const display = Space_Grotesk({ subsets: ["latin"], variable: "--font-display-face", display: "swap" });
@@ -37,8 +38,9 @@ const motionBootstrap = `(function(){try{var d=document.documentElement;if(windo
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
+    <html lang="en-IN" data-theme="dark" className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: motionBootstrap }} />
       </head>
       {/* Browser extensions (e.g. ColorZilla, Grammarly) add attributes to <body>; don't treat that as a hydration error. */}
