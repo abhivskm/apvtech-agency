@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Check, Film, ImagePlus, Link2, Loader2, Search, Upload, X } from "lucide-react";
 import { listMedia, type MediaItem } from "@/app/admin/(panel)/media/actions";
 import type { FormApi } from "@/components/admin/form";
+import { thumbUrl } from "@/lib/media-thumb";
 
 export async function uploadFiles(files: FileList | File[]): Promise<{ created: { id: string }[]; errors: string[] }> {
   const fd = new FormData();
@@ -18,7 +19,7 @@ export async function uploadFiles(files: FileList | File[]): Promise<{ created: 
 function Thumb({ item, className = "" }: { item: MediaItem; className?: string }) {
   if (item.kind === "IMAGE") {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={item.url} alt={item.alt} className={`h-full w-full object-cover ${className}`} loading="lazy" />;
+    return <img src={thumbUrl(item.url)} alt={item.alt} className={`h-full w-full object-cover ${className}`} loading="lazy" decoding="async" />;
   }
   return (
     <div className={`flex h-full w-full flex-col items-center justify-center gap-1 bg-zinc-800 text-xs text-zinc-200 ${className}`}>

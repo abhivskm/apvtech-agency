@@ -8,6 +8,7 @@ import { addExternalVideo, deleteMedia, getMediaUsage, updateMediaMeta, type Med
 import { uploadFiles } from "@/components/admin/MediaPicker";
 import { ConfirmButton } from "@/components/admin/form";
 import { EmptyState } from "@/components/admin/ui";
+import { thumbUrl } from "@/lib/media-thumb";
 
 function fmtSize(n: number | null) {
   if (!n) return "—";
@@ -80,7 +81,7 @@ export function MediaLibrary({ items, storageDriver }: { items: MediaItem[]; sto
                 >
                   {m.kind === "IMAGE" ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={m.url} alt={m.alt} className="h-full w-full object-cover" loading="lazy" />
+                    <img src={thumbUrl(m.url)} alt={m.alt} className="h-full w-full object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <span className="flex h-full flex-col items-center justify-center gap-1 bg-zinc-800 text-xs text-zinc-200">
                       {m.kind === "EXTERNAL_VIDEO" ? <Link2 className="h-5 w-5" /> : <Film className="h-5 w-5" />}
