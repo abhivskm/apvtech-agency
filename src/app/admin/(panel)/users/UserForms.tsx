@@ -54,7 +54,7 @@ export function UserRow({ user, isMe }: { user: U; isMe: boolean }) {
         <div className="text-xs text-zinc-500">{user.email}</div>
       </td>
       <td>
-        <select className="a-input" value={role} onChange={(e) => setRole(e.target.value)} aria-label={`Role for ${user.name}`}>
+        <select className="a-input min-w-40" value={role} onChange={(e) => setRole(e.target.value)} aria-label={`Role for ${user.name}`}>
           {ROLE_OPTS.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}

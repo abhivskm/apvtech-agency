@@ -494,7 +494,7 @@ function SortableRow({ id, children }: { id: string; children: React.ReactNode }
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   return (
     <li ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={`flex items-center gap-2 bg-white ${isDragging ? "relative z-10 shadow-lg" : ""}`}>
-      <button type="button" className="cursor-grab touch-none rounded p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700" aria-label="Drag to reorder (Space to lift, arrows to move)" {...attributes} {...listeners}>
+      <button type="button" className="cursor-grab touch-none rounded p-2.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 lg:p-1.5" aria-label="Drag to reorder (Space to lift, arrows to move)" {...attributes} {...listeners}>
         <GripVertical className="h-4 w-4" />
       </button>
       <div className="min-w-0 flex-1">{children}</div>

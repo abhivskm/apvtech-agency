@@ -157,7 +157,7 @@ export function Breadcrumbs({ items, settings }: { items: { name: string; path: 
                   {it.name}
                 </span>
               ) : (
-                <Link href={it.path} className="link-underline hover:text-ink">
+                <Link href={it.path} className="link-underline inline-block py-2 hover:text-ink lg:py-0">
                   {it.name}
                 </Link>
               )}

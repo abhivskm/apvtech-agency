@@ -50,7 +50,7 @@ export function AdminShell({ nav, user, brandName, newEnquiries, children }: Pro
                     <Link
                       href={it.href}
                       aria-current={active ? "page" : undefined}
-                      className={`flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] ${active ? "bg-zinc-900 text-white" : "text-zinc-700 hover:bg-zinc-200/70"}`}
+                      className={`flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm lg:py-1.5 lg:text-[13px] ${active ? "bg-zinc-900 text-white" : "text-zinc-700 hover:bg-zinc-200/70"}`}
                     >
                       <Icon className="h-4 w-4 shrink-0" aria-hidden />
                       <span className="flex-1 truncate">{it.label}</span>
@@ -104,7 +104,7 @@ export function AdminShell({ nav, user, brandName, newEnquiries, children }: Pro
           </button>
           <span className="text-sm font-semibold">{brandName} Admin</span>
         </header>
-        <main id="admin-main" className="mx-auto max-w-6xl px-4 py-6 lg:px-8 lg:py-8">
+        <main id="admin-main" className="mx-auto min-w-0 max-w-6xl px-4 py-6 lg:px-8 lg:py-8">
           {children}
         </main>
       </div>

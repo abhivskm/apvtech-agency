@@ -279,6 +279,16 @@ html.motion-ok .progress-line[data-reveal].is-in { transform: scaleX(1); }
   .a-prose ul { list-style: disc; padding-left: 1.3em; } .a-prose ol { list-style: decimal; padding-left: 1.3em; } .a-prose a { color: #2563eb; text-decoration: underline; }
   .a-prose blockquote { border-left: 3px solid #d4d4d8; padding-left: .8em; color: #52525b; }
   .a-prose:focus { outline: none; }
+
+  /* Phones and tablets: grid columns may shrink (wide tables scroll inside their card), larger tap
+     targets, and 16px inputs so iOS does not zoom in on focus. */
+  .admin .grid > * { min-width: 0; }
+  @media (max-width: 1023px), (pointer: coarse) {
+    .a-btn { min-height: 42px; }
+    .a-btn-sm { min-height: 38px; padding: .35rem .75rem; }
+    .a-input { min-height: 44px; font-size: 16px; }
+    .admin input[type="checkbox"], .admin input[type="radio"] { width: 1.15rem; height: 1.15rem; }
+  }
 }
 
 /* Light theme: the hero headline uses mix-blend-difference over the collage. White text under

@@ -72,10 +72,10 @@ export async function Footer({ settings, whatsappHref }: Props) {
           {columns.map((col) => (
             <nav key={col.title} aria-label={col.title} className="col-span-6 sm:col-span-4 lg:col-span-2">
               <p className="t-eyebrow mb-5">{col.title}</p>
-              <ul className="space-y-2.5 text-[0.9375rem]">
+              <ul className="space-y-0.5 text-[0.9375rem] lg:space-y-2.5">
                 {col.items.map((it) => (
                   <li key={it.id}>
-                    <Link href={it.href} className="link-underline text-ink/80 hover:text-ink" target={it.newTab ? "_blank" : undefined} rel={it.newTab ? "noopener noreferrer" : undefined}>
+                    <Link href={it.href} className="link-underline inline-block py-2 text-ink/80 hover:text-ink lg:py-0" target={it.newTab ? "_blank" : undefined} rel={it.newTab ? "noopener noreferrer" : undefined}>
                       {it.label}
                     </Link>
                   </li>
@@ -117,10 +117,10 @@ export async function Footer({ settings, whatsappHref }: Props) {
               ))}
             </ul>
           )}
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
+          <ul className="flex flex-wrap gap-x-6 gap-y-0 lg:gap-y-2">
             {legal.map((l) => (
               <li key={l.id}>
-                <Link href={l.href} className="link-underline hover:text-ink">
+                <Link href={l.href} className="link-underline inline-block py-2 hover:text-ink lg:py-0">
                   {l.label}
                 </Link>
               </li>

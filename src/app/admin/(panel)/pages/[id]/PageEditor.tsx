@@ -154,7 +154,7 @@ export function PageEditor({ initial, isSystem, isHome }: { initial: Values; isS
     <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
             <h2 className="text-sm font-semibold">Sections ({sections.length})</h2>
             <p className="text-xs text-zinc-500">Drag to reorder · eye icon toggles visibility</p>
           </div>
@@ -170,7 +170,7 @@ export function PageEditor({ initial, isSystem, isHome }: { initial: Values; isS
               return (
                 <div className={`a-card overflow-hidden ${hasError ? "border-red-300 ring-1 ring-red-200" : ""} ${!s.visible ? "opacity-70" : ""}`}>
                   <div className="flex items-center gap-2 px-3 py-2.5">
-                    <button type="button" className="flex min-w-0 flex-1 items-center gap-2 text-left" onClick={() => setOpen(isOpen ? null : s._cid)} aria-expanded={isOpen}>
+                    <button type="button" className="flex min-h-11 min-w-0 flex-1 items-center gap-2 text-left lg:min-h-0" onClick={() => setOpen(isOpen ? null : s._cid)} aria-expanded={isOpen}>
                       {isOpen ? <ChevronDown className="h-4 w-4 shrink-0" /> : <ChevronRight className="h-4 w-4 shrink-0" />}
                       <span className="a-badge shrink-0 border-zinc-200 bg-zinc-100 text-zinc-700">{def?.label ?? s.type}</span>
                       <span className="truncate text-[13px]">{summary(s) || <em className="text-zinc-400">Untitled</em>}</span>

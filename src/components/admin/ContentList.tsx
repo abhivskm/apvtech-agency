@@ -32,7 +32,7 @@ function Row({ entity, row }: { entity: Entity; row: ContentRow }) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           {row.editHref ? (
-            <Link href={row.editHref} className="truncate font-medium text-zinc-900 hover:underline">
+            <Link href={row.editHref} className="truncate py-1.5 font-medium text-zinc-900 hover:underline lg:py-0">
               {row.title}
             </Link>
           ) : (
