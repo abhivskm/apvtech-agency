@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import type { SessionUser } from "@/lib/auth/session";
+import { logError } from "@/lib/log";
 
 const SENSITIVE_KEYS = /pass(word)?|token|secret|hash|key|authorization|cookie/i;
 
@@ -40,6 +41,6 @@ export async function logActivity(
     });
   } catch (err) {
     // Auditing must never break the primary operation.
-    console.error("activity log failed", err);
+    logError("activity log failed", err);
   }
 }

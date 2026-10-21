@@ -164,7 +164,9 @@ All secrets live in environment variables. See [`.env.example`](.env.example). B
 6. **Domain.** Add your domain in Vercel, then set **Admin → Global Settings → Public site URL**.
 7. **Search Console.** Add the property, paste the verification code in **SEO & Redirects**, and submit `/sitemap.xml`.
 
-> **Upload size on Vercel.** Serverless functions accept request bodies up to about 4.5 MB, so uploads larger than that fail on Vercel even if `MAX_UPLOAD_MB` is higher. Compress images before uploading, and for video use YouTube/Vimeo links (Media Library → Add video link) or the Docker deployment. Direct-to-bucket uploads can be added later if large uploads become important.
+> **Media on Vercel: Vercel Blob (current setup).** Instead of R2 you can connect a Blob store (Vercel → Storage → Blob). That adds `BLOB_READ_WRITE_TOKEN`, and the app then uses `STORAGE_DRIVER=blob`. Because Vercel functions reject request bodies over ~4.5 MB, the admin uploads files **straight from the browser to Blob** using a short-lived token from `/api/admin/media/blob-upload` (signed-in users with media permission only). The server then re-checks the stored bytes before adding the file to the library. The nightly cron deletes uploads that were never added.
+
+> **Preview deployments** use the same database as production, so `scripts/vercel-build.sh` runs migrations and the seed **only when `VERCEL_ENV=production`**. Keep Vercel *Deployment Protection* enabled for previews so only your team can open them.
 
 ## Alternative: single server with Docker
 
@@ -174,6 +176,8 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 Put Caddy or Nginx in front for HTTPS. With `STORAGE_DRIVER=local`, uploads persist in the `uploads` volume.
+
+The proxy **must overwrite** `X-Forwarded-For` / `X-Real-IP` with the real client address (Nginx: `proxy_set_header X-Real-IP $remote_addr;`). Rate limiting uses these headers, and without a proxy a client could fake them.
 
 The image contains production dependencies only. Run `npm run seed` and `npm run create-admin` from a checkout of the repository with `DATABASE_URL` pointing at the server's database (for example through an SSH tunnel to port 5432).
 
@@ -221,6 +225,16 @@ Integration tests refuse to run against a database whose URL doesn't contain "te
 - All input is validated with zod on the server. Links accept only site paths, `https:`, `mailto:` and `tel:`. Rich text and JSON-LD are escaped or sanitised. CSV exports neutralise spreadsheet formulas.
 - IP addresses are stored only as keyed hashes. The activity log never stores passwords or tokens. Enquiries can be anonymised or deleted, and a retention policy is available.
 - Never commit `.env*` files; they are already in `.gitignore`.
+- Admin sessions slide for 7 days of inactivity but end **30 days after sign-in** at the latest. Changing a password or role signs that user out everywhere.
+- Error logs never include submitted form data: database errors are logged by type and code only (`src/lib/log.ts`).
+- Social share images (`/og`) only draw text from links the site signed itself; any other request gets the plain brand card.
+
+**Accepted risks (reviewed in the pre-launch audit)**
+
+- **CSP allows inline scripts** (`'unsafe-inline'`). Next.js needs inline bootstrap scripts, and per-request nonces would disable static rendering and caching. All CMS content is sanitised on save and on render, which is the primary XSS defence.
+- **The app connects with the database owner role.** Migrations need it. On a paid Neon plan, create a separate role with only SELECT/INSERT/UPDATE/DELETE for the app (`DATABASE_URL`) and keep the owner role for `DIRECT_DATABASE_URL` (migrations).
+- **No two-factor authentication** for admin accounts (deferred). Use long, unique passwords and a password manager.
+- `npm audit` findings in dev/test tools (vitest, vite, eslint) and build-time packages don't run on the live site. Upgrade them together with Node 22 LTS.
 
 ## Troubleshooting
 

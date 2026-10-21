@@ -19,3 +19,8 @@ export function safeEqual(a: string, b: string): boolean {
   if (ab.length !== bb.length) return false;
   return timingSafeEqual(ab, bb);
 }
+
+/** Short signature for public URLs we generate ourselves (e.g. social share images), so others can't forge them. */
+export function signParams(...parts: string[]): string {
+  return hmac(`og|${parts.join("|")}`).slice(0, 16);
+}

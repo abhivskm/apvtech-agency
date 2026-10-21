@@ -8,6 +8,8 @@ import { randomToken, sha256 } from "@/lib/crypto";
 export const SESSION_COOKIE = "agency_session";
 const SESSION_TTL_MS = 7 * 24 * 3600_000;
 const RENEW_THRESHOLD_MS = 24 * 3600_000;
+/** Hard limit: however active, a session ends 30 days after sign-in and the user signs in again. */
+const SESSION_MAX_AGE_MS = 30 * 24 * 3600_000;
 
 export type SessionUser = { id: string; email: string; name: string; role: Role };
 
@@ -37,13 +39,14 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     include: { user: { select: { id: true, email: true, name: true, role: true, active: true } } },
   });
   if (!session) return null;
-  if (session.expiresAt.getTime() < Date.now() || !session.user.active) {
+  const hardLimit = session.createdAt.getTime() + SESSION_MAX_AGE_MS;
+  if (session.expiresAt.getTime() < Date.now() || hardLimit < Date.now() || !session.user.active) {
     await db.session.delete({ where: { id: session.id } }).catch(() => {});
     return null;
   }
-  // Sliding expiry: extend sessions that are within a day of expiring.
-  if (session.expiresAt.getTime() - Date.now() < SESSION_TTL_MS - RENEW_THRESHOLD_MS) {
-    const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+  // Sliding expiry, never past the hard limit: extend sessions that are used again after a day.
+  if (session.expiresAt.getTime() - Date.now() < SESSION_TTL_MS - RENEW_THRESHOLD_MS && session.expiresAt.getTime() < hardLimit) {
+    const expiresAt = new Date(Math.min(Date.now() + SESSION_TTL_MS, hardLimit));
     await db.session.update({ where: { id: session.id }, data: { expiresAt } }).catch(() => {});
     try {
       jar.set(SESSION_COOKIE, token, {

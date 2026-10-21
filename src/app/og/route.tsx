@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getSettings } from "@/lib/content/queries";
 import { DEFAULT_BRAND, DEFAULT_COLORS } from "@/lib/brand";
+import { safeEqual, signParams } from "@/lib/crypto";
 
 /**
  * Branded 1200×630 social sharing card (Open Graph / Twitter) for pages that have no image of their own.
@@ -11,8 +12,13 @@ export async function GET(req: Request) {
   const settings = await getSettings();
   const colors = settings?.colors ?? DEFAULT_COLORS;
   const brand = settings?.brandName || DEFAULT_BRAND.brandName;
-  const title = (searchParams.get("title") || settings?.tagline || DEFAULT_BRAND.tagline).slice(0, 120);
-  const label = (searchParams.get("label") || "").slice(0, 40);
+  // Only text from links the site generated itself (signed) is drawn; anything else gets the plain brand card,
+  // so nobody can produce official-looking images with their own wording on this domain.
+  const rawTitle = searchParams.get("title") ?? "";
+  const rawLabel = searchParams.get("label") ?? "";
+  const signed = safeEqual(searchParams.get("s") ?? "", signParams(rawTitle, rawLabel));
+  const title = ((signed && rawTitle) || settings?.tagline || DEFAULT_BRAND.tagline).slice(0, 120);
+  const label = (signed ? rawLabel : "").slice(0, 40);
   const host = (settings?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "").replace(/^https?:\/\//, "").replace(/\/$/, "");
   const size = title.length > 70 ? 60 : title.length > 40 ? 72 : 84;
 

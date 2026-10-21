@@ -7,6 +7,7 @@ import type { Permission } from "@/lib/auth/permissions";
 import type { ActionResult } from "@/lib/admin/action";
 import { logActivity } from "@/lib/audit";
 import { refresh } from "@/lib/content/revalidate";
+import { logError } from "@/lib/log";
 
 const ENTITY = z.enum(["service", "project", "industry", "article", "page", "testimonial", "faq", "plan"]);
 type Entity = z.infer<typeof ENTITY>;
@@ -32,7 +33,7 @@ async function guard(entity: unknown) {
 function fail(err: unknown): ActionResult {
   if (err instanceof AuthError) return { ok: false, error: err.message };
   if (err instanceof z.ZodError) return { ok: false, error: "Invalid request." };
-  console.error(err);
+  logError("action failed", err);
   return { ok: false, error: "Something went wrong. Please try again." };
 }
 

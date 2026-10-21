@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { AuthError, requirePermission } from "@/lib/auth/guard";
 import type { Permission } from "@/lib/auth/permissions";
 import type { SessionUser } from "@/lib/auth/session";
+import { logError } from "@/lib/log";
 
 export type ActionResult<T = undefined> =
   | { ok: true; message?: string; data?: T }
@@ -40,7 +41,7 @@ export function adminAction<I, T = undefined>(permission: Permission, fn: (input
       }
       // Re-throw Next.js control-flow errors (redirect / notFound)
       if (err && typeof err === "object" && "digest" in err && String((err as { digest: unknown }).digest).startsWith("NEXT_")) throw err;
-      console.error("admin action failed", err);
+      logError("admin action failed", err);
       return { ok: false, error: "Something went wrong. Please try again." };
     }
   };

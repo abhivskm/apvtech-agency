@@ -4,6 +4,7 @@ import { deleteStoredFile, registerBlobUpload, storeUpload, UploadError } from "
 import { logActivity } from "@/lib/audit";
 import { refresh } from "@/lib/content/revalidate";
 import { TAGS } from "@/lib/content/tags";
+import { logError } from "@/lib/log";
 
 export const runtime = "nodejs";
 
@@ -43,7 +44,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return Response.json({ ok: true });
   } catch (err) {
     if (err instanceof UploadError) return Response.json({ error: err.message }, { status: 400 });
-    console.error("replace failed", err);
+    logError("replace failed", err);
     return Response.json({ error: "Upload failed." }, { status: 500 });
   }
 }

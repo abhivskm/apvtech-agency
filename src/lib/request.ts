@@ -3,8 +3,11 @@ import { hmac } from "@/lib/crypto";
 
 export async function clientIp(): Promise<string> {
   const h = await headers();
+  // On Vercel, x-vercel-forwarded-for / x-real-ip are set by the platform and can't be spoofed by the client.
+  // Self-hosted deployments must run behind a proxy that overwrites x-forwarded-for (see README → Docker).
+  const trusted = h.get("x-vercel-forwarded-for") ?? h.get("x-real-ip");
   const fwd = h.get("x-forwarded-for");
-  return (fwd?.split(",")[0] ?? h.get("x-real-ip") ?? "unknown").trim();
+  return (trusted?.split(",")[0] ?? fwd?.split(",")[0] ?? "unknown").trim();
 }
 
 export async function clientIpHash(): Promise<string> {

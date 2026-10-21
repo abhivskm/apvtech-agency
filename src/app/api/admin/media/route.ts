@@ -5,6 +5,7 @@ import { storageSetupHint, storageStatus } from "@/lib/storage";
 import { logActivity } from "@/lib/audit";
 import { refresh } from "@/lib/content/revalidate";
 import { TAGS } from "@/lib/content/tags";
+import { logError } from "@/lib/log";
 
 export const runtime = "nodejs";
 
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
       refresh(TAGS.media);
       return Response.json({ created: [{ id: asset.id, url: asset.url, filename: asset.filename }], errors: [] }, { status: 201 });
     } catch (err) {
-      if (!(err instanceof UploadError)) console.error("blob register failed", err);
+      if (!(err instanceof UploadError)) logError("blob register failed", err);
       return Response.json({ created: [], errors: [`${body.filename ?? "File"}: ${err instanceof UploadError ? err.message : "upload failed"}`] }, { status: 400 });
     }
   }
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
       await logActivity(user, "media.upload", "MediaAsset", asset.id, `Uploaded ${asset.filename}`, { size: asset.size, mime: asset.mime });
     } catch (err) {
       errors.push(`${file.name}: ${err instanceof UploadError ? err.message : "upload failed"}`);
-      if (!(err instanceof UploadError)) console.error("upload failed", err);
+      if (!(err instanceof UploadError)) logError("upload failed", err);
     }
   }
   if (created.length) refresh(TAGS.media);

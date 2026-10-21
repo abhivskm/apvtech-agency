@@ -4,6 +4,7 @@ import { sha256 } from "@/lib/crypto";
 import { rateLimit } from "@/lib/rate-limit";
 import { enquirySchema } from "@/lib/validation/enquiry";
 import { deliverOutboxItem, queueEnquiryNotification } from "@/lib/email/outbox";
+import { logError } from "@/lib/log";
 
 export type EnquiryResult =
   | { ok: true; duplicate?: boolean }
@@ -75,7 +76,7 @@ export async function createEnquiry(input: unknown, meta: { ipHash: string; now?
     const item = await queueEnquiryNotification(enquiry, settings?.brandName ?? "website", settings?.notificationEmail ?? null);
     if (item.status === "PENDING") await (meta.deliver ?? deliverOutboxItem)(item.id);
   } catch (err) {
-    console.error("enquiry notification failed (enquiry saved)", err);
+    logError("enquiry notification failed (enquiry saved)", err);
   }
 
   return { ok: true };

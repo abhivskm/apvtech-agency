@@ -1,4 +1,4 @@
-import { del, put } from "@vercel/blob";
+import { del, list, put } from "@vercel/blob";
 import type { StorageAdapter } from "@/lib/storage";
 
 /**
@@ -37,3 +37,26 @@ export function isBlobUrl(url: string) {
 
 /** Pathnames the browser may upload to: media/YYYY/MM/<safe-name>. */
 export const BLOB_PATH = /^media\/\d{4}\/\d{2}\/[a-zA-Z0-9._-]{1,120}$/;
+
+/**
+ * Deletes browser uploads that were never added to the media library (e.g. the tab closed mid-upload
+ * or the file failed validation after upload). Only files older than a day under media/ are touched.
+ */
+export async function cleanupOrphanBlobs(token: string, isRegistered: (pathnames: string[]) => Promise<Set<string>>) {
+  const cutoff = Date.now() - 24 * 3600_000;
+  let cursor: string | undefined;
+  let deleted = 0;
+  for (let page = 0; page < 20; page++) {
+    const res = await list({ prefix: "media/", limit: 500, cursor, token });
+    const old = res.blobs.filter((b) => new Date(b.uploadedAt).getTime() < cutoff);
+    const known = await isRegistered(old.map((b) => b.pathname));
+    const orphans = old.filter((b) => !known.has(b.pathname)).map((b) => b.url);
+    if (orphans.length) {
+      await del(orphans, { token });
+      deleted += orphans.length;
+    }
+    if (!res.hasMore) break;
+    cursor = res.cursor;
+  }
+  return deleted;
+}

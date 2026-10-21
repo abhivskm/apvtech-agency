@@ -7,6 +7,7 @@ import { env } from "@/lib/env";
 import { randomToken } from "@/lib/crypto";
 import { head } from "@vercel/blob";
 import { BLOB_PATH, isBlobUrl } from "@/lib/storage/blob";
+import { logError } from "@/lib/log";
 
 export const IMAGE_MIME = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif", "image/x-icon"] as const;
 export const VIDEO_MIME = ["video/mp4", "video/webm"] as const;
@@ -102,6 +103,6 @@ export async function deleteStoredFile(key: string | null) {
   try {
     await getStorage().delete(key);
   } catch (err) {
-    console.error("storage delete failed", err);
+    logError("storage delete failed", err);
   }
 }

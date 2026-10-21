@@ -1,6 +1,7 @@
 import "server-only";
 import type { Metadata } from "next";
 import { env } from "@/lib/env";
+import { signParams } from "@/lib/crypto";
 import { getSettings, type Media, type Settings } from "@/lib/content/queries";
 
 export function siteUrl(settings?: Settings | null) {
@@ -40,7 +41,10 @@ export async function buildMetadata(input: MetaInput): Promise<Metadata> {
     ? [{ url: absoluteUrl(image.url, settings), alt: image.alt || title || settings?.brandName, width: image.width ?? undefined, height: image.height ?? undefined }]
     : [
         {
-          url: absoluteUrl(`/og?${new URLSearchParams({ title: cardTitle, ...(input.ogLabel ? { label: input.ogLabel } : {}) })}`, settings),
+          url: absoluteUrl(
+            `/og?${new URLSearchParams({ title: cardTitle, ...(input.ogLabel ? { label: input.ogLabel } : {}), s: signParams(cardTitle, input.ogLabel ?? "") })}`,
+            settings,
+          ),
           alt: cardTitle || settings?.brandName,
           width: 1200,
           height: 630,
