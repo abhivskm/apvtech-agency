@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Copy, Film, Link2, Loader2, RefreshCw, Upload, X } from "lucide-react";
 import { addExternalVideo, deleteMedia, getMediaUsage, updateMediaMeta, type MediaItem } from "./actions";
-import { uploadFiles } from "@/components/admin/MediaPicker";
+import { replaceFile, uploadFiles } from "@/components/admin/MediaPicker";
 import { ConfirmButton } from "@/components/admin/form";
 import { EmptyState } from "@/components/admin/ui";
 import { thumbUrl } from "@/lib/media-thumb";
@@ -127,15 +127,12 @@ function MediaDetails({ item, onClose }: { item: MediaItem; onClose: () => void 
     const f = files?.[0];
     if (!f) return;
     setReplacing(true);
-    const fd = new FormData();
-    fd.append("file", f);
-    const res = await fetch(`/api/admin/media/${item.id}`, { method: "POST", body: fd });
-    const json = await res.json().catch(() => ({}));
+    const res = await replaceFile(item.id, f);
     setReplacing(false);
     if (res.ok) {
       toast.success("File replaced everywhere it is used");
       router.refresh();
-    } else toast.error(json.error ?? "Replace failed");
+    } else toast.error(res.error ?? "Replace failed");
   };
 
   return (

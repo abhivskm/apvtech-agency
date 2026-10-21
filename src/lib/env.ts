@@ -4,7 +4,9 @@ import "server-only";
 export const env = {
   siteUrl: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
   appSecret: process.env.APP_SECRET ?? "",
-  storageDriver: (process.env.STORAGE_DRIVER ?? "local") as "local" | "s3",
+  // Defaults to Vercel Blob when a Blob store is connected to the project, otherwise local disk.
+  storageDriver: (process.env.STORAGE_DRIVER || (process.env.BLOB_READ_WRITE_TOKEN ? "blob" : "local")) as "local" | "s3" | "blob",
+  blobToken: process.env.BLOB_READ_WRITE_TOKEN ?? "",
   maxUploadBytes: Number(process.env.MAX_UPLOAD_MB ?? 10) * 1024 * 1024,
   maxVideoUploadBytes: Number(process.env.MAX_VIDEO_UPLOAD_MB ?? 50) * 1024 * 1024,
   s3: {

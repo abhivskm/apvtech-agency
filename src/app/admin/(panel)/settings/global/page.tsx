@@ -49,7 +49,7 @@ export default async function GlobalSettings() {
             <Status
               ok={storage.configured ? (storage.persistentWarning ? "warn" : storage.driver === "local" && env.isProd ? "warn" : true) : false}
               label={`Media storage: ${storage.driver}`}
-              detail={storage.persistentWarning ?? (storage.driver === "local" ? "Files saved on this server's disk. Use S3/R2 for serverless hosting." : storage.configured ? "S3-compatible bucket configured." : "Set S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_PUBLIC_BASE_URL.")}
+              detail={storage.persistentWarning ?? (storage.driver === "local" ? "Files saved on this server's disk. Use Vercel Blob or S3/R2 for serverless hosting." : storage.driver === "blob" ? (storage.configured ? "Vercel Blob store connected." : "Connect a Blob store in Vercel → Storage (sets BLOB_READ_WRITE_TOKEN).") : storage.configured ? "S3-compatible bucket configured." : "Set S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_PUBLIC_BASE_URL.")}
             />
             <Status ok={email.configured ? (failing ? "warn" : true) : false} label="Email notifications (Resend)" detail={email.configured ? (failing ? `${failing} notification(s) failed — see Enquiries.` : `Sending to ${s.notificationEmail}.`) : `Not configured: ${email.missing.join("; ")}. Enquiries are still saved.`} />
             <Status ok={Boolean(normaliseWhatsappNumber(s.whatsappNumber))} label="WhatsApp" detail={s.whatsappNumber ? "Number configured — buttons are live." : "No number yet — WhatsApp buttons are hidden. Add it in Contact Information."} />

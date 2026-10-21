@@ -7,13 +7,75 @@ import { listMedia, type MediaItem } from "@/app/admin/(panel)/media/actions";
 import type { FormApi } from "@/components/admin/form";
 import { thumbUrl } from "@/lib/media-thumb";
 
+let uploadMode: Promise<{ direct: boolean }> | null = null;
+/** Whether files go straight from the browser to Vercel Blob (production) or through the server (local / S3). */
+function getUploadMode() {
+  uploadMode ??= fetch("/api/admin/media")
+    .then((r) => (r.ok ? r.json() : { direct: false }))
+    .catch(() => ({ direct: false }));
+  return uploadMode;
+}
+
+/** Uploads one file straight to Vercel Blob and returns the reference the server validates. */
+async function uploadToBlob(file: File) {
+  const { upload } = await import("@vercel/blob/client");
+  const now = new Date();
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-").slice(-80) || "file";
+  const blob = await upload(`media/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}/${safe}`, file, {
+    access: "public",
+    handleUploadUrl: "/api/admin/media/blob-upload",
+    contentType: file.type || undefined,
+    multipart: file.size > 4 * 1024 * 1024,
+  });
+  return { url: blob.url, pathname: blob.pathname, filename: file.name };
+}
+
+const uploadErrorText = (file: File, err: unknown) =>
+  `${file.name}: ${err instanceof Error && err.message ? err.message.replace(/^Vercel Blob:\s*/, "") : "upload failed"}`;
+
 export async function uploadFiles(files: FileList | File[]): Promise<{ created: { id: string }[]; errors: string[] }> {
+  const list = Array.from(files);
+  if ((await getUploadMode()).direct) {
+    const created: { id: string }[] = [];
+    const errors: string[] = [];
+    for (const file of list.slice(0, 20)) {
+      try {
+        const ref = await uploadToBlob(file);
+        const res = await fetch("/api/admin/media", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ref) });
+        const json = await res.json().catch(() => ({ created: [], errors: [`${file.name}: upload failed`] }));
+        created.push(...(json.created ?? []));
+        errors.push(...(json.errors ?? (json.error ? [json.error] : [])));
+      } catch (err) {
+        errors.push(uploadErrorText(file, err));
+      }
+    }
+    return { created, errors };
+  }
   const fd = new FormData();
-  for (const f of Array.from(files)) fd.append("file", f);
+  for (const f of list) fd.append("file", f);
   const res = await fetch("/api/admin/media", { method: "POST", body: fd });
   const json = await res.json().catch(() => ({ created: [], errors: ["Upload failed"] }));
   if (json.error) return { created: [], errors: [json.error] };
   return json;
+}
+
+/** Replaces the file behind a media asset (same id, so every usage updates). */
+export async function replaceFile(id: string, file: File): Promise<{ ok: boolean; error?: string }> {
+  let res: Response;
+  try {
+    if ((await getUploadMode()).direct) {
+      const ref = await uploadToBlob(file);
+      res = await fetch(`/api/admin/media/${id}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ref) });
+    } else {
+      const fd = new FormData();
+      fd.append("file", file);
+      res = await fetch(`/api/admin/media/${id}`, { method: "POST", body: fd });
+    }
+  } catch (err) {
+    return { ok: false, error: uploadErrorText(file, err) };
+  }
+  const json = await res.json().catch(() => ({}));
+  return res.ok ? { ok: true } : { ok: false, error: json.error ?? "Replace failed" };
 }
 
 function Thumb({ item, className = "" }: { item: MediaItem; className?: string }) {

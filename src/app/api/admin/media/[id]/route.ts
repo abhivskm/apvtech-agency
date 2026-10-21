@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { guardRoute } from "@/lib/admin/route-guard";
-import { deleteStoredFile, storeUpload, UploadError } from "@/lib/storage/media";
+import { deleteStoredFile, registerBlobUpload, storeUpload, UploadError } from "@/lib/storage/media";
 import { logActivity } from "@/lib/audit";
 import { refresh } from "@/lib/content/revalidate";
 import { TAGS } from "@/lib/content/tags";
@@ -19,11 +19,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!asset) return Response.json({ error: "Media not found." }, { status: 404 });
   if (asset.kind === "EXTERNAL_VIDEO") return Response.json({ error: "External links cannot be replaced with a file." }, { status: 400 });
 
-  const file = (await req.formData().catch(() => null))?.get("file");
-  if (!(file instanceof File)) return Response.json({ error: "No file received." }, { status: 400 });
+  let file: File | null = null;
+  let blobRef: { url: string; pathname: string; filename: string } | null = null;
+  if (req.headers.get("content-type")?.includes("application/json")) {
+    const body = (await req.json().catch(() => null)) as { url?: string; pathname?: string; filename?: string } | null;
+    if (body?.url && body.pathname) blobRef = { url: body.url, pathname: body.pathname, filename: body.filename ?? "file" };
+  } else {
+    const f = (await req.formData().catch(() => null))?.get("file");
+    if (f instanceof File) file = f;
+  }
+  if (!file && !blobRef) return Response.json({ error: "No file received." }, { status: 400 });
 
   try {
-    const stored = await storeUpload(file);
+    const stored = blobRef ? await registerBlobUpload(blobRef) : await storeUpload(file!);
     if ((asset.kind === "VIDEO") !== (stored.kind === "VIDEO")) {
       await deleteStoredFile(stored.storageKey);
       return Response.json({ error: "Replace images with images and videos with videos." }, { status: 400 });

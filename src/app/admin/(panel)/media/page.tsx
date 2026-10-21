@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requirePagePermission } from "@/lib/auth/guard";
-import { storageStatus } from "@/lib/storage";
+import { storageSetupHint, storageStatus } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { PageHeader, Pagination, SearchFilters } from "@/components/admin/ui";
 import { MediaLibrary } from "./MediaLibrary";
@@ -33,7 +33,7 @@ export default async function MediaPage({ searchParams }: { searchParams: Promis
       {storage.persistentWarning && <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{storage.persistentWarning}</p>}
       {!storage.configured && (
         <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-          Uploads are disabled: S3/R2 storage is selected but not fully configured. See README → Media storage.
+          Uploads are disabled: {storageSetupHint(storage.driver)}
         </p>
       )}
       <SearchFilters
