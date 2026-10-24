@@ -12,6 +12,7 @@ import { MotionInit } from "@/components/site/MotionInit";
 import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 import { Analytics } from "@/components/site/Analytics";
 import { JsonLd } from "@/components/site/JsonLd";
+import { IntroLoader } from "@/components/site/IntroLoader";
 
 /** Shared public chrome (header, footer, WhatsApp, analytics) used by the site layout and the 404 page. */
 export async function SiteShell({ children }: { children: React.ReactNode }) {
@@ -41,6 +42,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="site min-h-screen">
       <BrandStyle colors={settings.colors} />
+      <IntroLoader brandName={settings.brandName} />
       <JsonLd data={[organizationJsonLd(settings, social.map((s) => s.url)), websiteJsonLd(settings)]} />
       <a href="#main" className="skip-link">
         Skip to content

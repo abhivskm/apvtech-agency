@@ -296,3 +296,53 @@ html.motion-ok .progress-line[data-reveal].is-in { transform: scaleX(1); }
 @media (min-width: 1024px) {
   :root[data-theme="light"] .hero-blend { color: #ffffff; }
 }
+
+/* ───────────── Intro loader (src/components/site/IntroLoader.tsx) ─────────────
+   Hidden unless the inline script sets html[data-intro="N"]. Each variant ends hidden on its own
+   (visibility in the last keyframe), and html[data-intro-done] removes it entirely. */
+.intro { display: none; position: fixed; inset: 0; z-index: 100; background: var(--brand-bg); color: var(--brand-text); pointer-events: auto; }
+html[data-intro="1"] .intro-v1, html[data-intro="2"] .intro-v2, html[data-intro="3"] .intro-v3, html[data-intro="4"] .intro-v4 { display: flex; }
+html[data-intro-done] .intro { display: none !important; }
+/* While an intro plays, the homepage headline waits until it is visible. */
+html.motion-ok[data-intro] .hero-line > span { animation-delay: calc(var(--i, 0) * 90ms + var(--intro-ms, 0ms) - 350ms); }
+html.motion-ok[data-intro] .fade-in { animation-delay: calc(var(--d, 400ms) + var(--intro-ms, 0ms) - 350ms); }
+
+.intro-mark { display: inline-flex; align-items: center; gap: .85rem; font-family: var(--font-display); font-weight: 500; font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: -.02em; animation: intro-rise .7s var(--ease-out) both; }
+.intro-dot { position: relative; display: inline-block; width: .55em; height: .55em; border-radius: 999px; background: var(--brand-accent); }
+.intro-dot i { position: absolute; inset: 0; border-radius: inherit; border: 1.5px solid var(--brand-accent); animation: intro-ripple 1.1s var(--ease-out) .2s both; }
+.intro-dot i + i { animation-delay: .6s; }
+
+/* 1 · Signal pulse */
+.intro-v1 { align-items: center; justify-content: center; animation: intro-fade .55s var(--ease-out) 1.15s forwards; }
+
+/* 2 · Wordmark rise */
+.intro-v2 { flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: var(--gutter); padding-bottom: 14vh; animation: intro-lift .8s cubic-bezier(.76, 0, .24, 1) 1.3s forwards; }
+.intro-words { display: flex; flex-wrap: wrap; gap: 0 .22em; font-family: var(--font-display); font-weight: 500; font-size: clamp(3rem, 11vw, 10rem); line-height: .9; letter-spacing: -.045em; text-transform: uppercase; }
+.intro-word { display: inline-block; overflow: hidden; padding-bottom: .06em; }
+.intro-word > span { display: inline-block; animation: intro-word-up .8s var(--ease-out) both; animation-delay: calc(var(--w, 0) * 110ms + 100ms); }
+.intro-bar { display: block; height: 4px; width: min(40vw, 320px); margin-top: 1.6rem; background: var(--brand-accent); transform-origin: left; animation: intro-grow .9s var(--ease-out) .4s both; }
+
+/* 3 · Counter (decorative timing) */
+@property --intro-n { syntax: "<integer>"; initial-value: 0; inherits: false; }
+.intro-v3 { flex-direction: column; justify-content: space-between; padding: var(--gutter); clip-path: inset(0 0 0 0); animation: intro-wipe .6s cubic-bezier(.76, 0, .24, 1) 1.5s forwards; }
+.intro-v3-brand .intro-mark { font-size: 1.05rem; }
+.intro-count { align-self: flex-end; font-family: var(--font-display); font-weight: 500; font-size: clamp(5rem, 18vw, 15rem); line-height: .8; letter-spacing: -.05em; margin-bottom: 1.5rem; counter-reset: intro var(--intro-n); animation: intro-count 1.4s cubic-bezier(.65, 0, .35, 1) .1s both; }
+.intro-count::after { content: counter(intro); }
+.intro-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--brand-border); }
+.intro-progress i { display: block; height: 100%; background: var(--brand-accent); transform-origin: left; animation: intro-grow 1.4s cubic-bezier(.65, 0, .35, 1) .1s both; }
+
+/* 4 · Panel stack */
+.intro.intro-v4 { background: transparent; }
+.intro-p { position: absolute; inset: 0; animation: intro-lift .75s cubic-bezier(.76, 0, .24, 1) forwards; }
+.intro-p3 { z-index: 3; display: flex; align-items: center; justify-content: center; background: var(--brand-bg); animation-delay: .9s; }
+.intro-p2 { z-index: 2; background: var(--brand-surface); animation-delay: 1.02s; }
+.intro-p1 { z-index: 1; background: var(--brand-accent); animation-delay: 1.14s; }
+
+@keyframes intro-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes intro-ripple { from { transform: scale(1); opacity: .9; } to { transform: scale(6); opacity: 0; } }
+@keyframes intro-fade { to { opacity: 0; visibility: hidden; } }
+@keyframes intro-lift { to { transform: translateY(-100%); visibility: hidden; } }
+@keyframes intro-wipe { to { clip-path: inset(0 0 100% 0); visibility: hidden; } }
+@keyframes intro-word-up { from { transform: translateY(105%); } to { transform: none; } }
+@keyframes intro-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes intro-count { from { --intro-n: 0; } to { --intro-n: 100; } }
