@@ -2,7 +2,7 @@
 
 A digital-agency website with a database-backed CMS and admin panel. Built with Next.js 15 (App Router), TypeScript, Tailwind CSS 4, PostgreSQL and Prisma.
 
-The brand is currently the temporary working name **FORM & SIGNAL**. The name, tagline, logo, colours, contact details and social links are all stored in the database. Change them in **Admin → Branding & Theme / Contact Information**. Nothing is hard-coded across the codebase.
+The brand is **APV Tech** (domain **apvtech.in**). The name, tagline, logo, colours, contact details and social links are all stored in the database. Change them in **Admin → Branding & Theme / Contact Information**. Nothing is hard-coded across the codebase.
 
 ---
 

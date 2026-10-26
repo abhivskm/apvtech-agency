@@ -21,8 +21,8 @@ export const DEFAULT_COLORS: BrandColors = {
 };
 
 export const DEFAULT_BRAND = {
-  brandName: "FORM & SIGNAL",
-  brandShortName: "F&S",
+  brandName: "APV Tech",
+  brandShortName: "APV",
   tagline: "One partner. Every digital touchpoint.",
   supportingMessage:
     "From websites and search visibility to social content, product photography, and digital campaigns, we bring everything your brand needs to grow online under one roof.",

@@ -53,8 +53,8 @@ async function seedSettings() {
       db.siteSettings.create({
         data: {
           id: "singleton",
-          brandName: "FORM & SIGNAL",
-          brandShortName: "F&S",
+          brandName: "APV Tech",
+          brandShortName: "APV",
           tagline: "One partner. Every digital touchpoint.",
           supportingMessage:
             "From websites and search visibility to social content, product photography, and digital campaigns, we bring everything your brand needs to grow online under one roof.",
@@ -63,7 +63,7 @@ async function seedSettings() {
           serviceAreas: "India",
           footerText: "A connected digital studio for ambitious businesses across India.",
           copyrightText: "© {year} {brand}. All rights reserved.",
-          defaultSeoTitle: "FORM & SIGNAL — Digital Agency in India for Websites, SEO & Growth",
+          defaultSeoTitle: "APV Tech — Digital Agency in India for Websites, SEO & Growth",
           defaultSeoDescription:
             "One partner for every digital touchpoint: websites, e-commerce, SEO and Google presence, social media, photography, video, ads and automation for businesses across India.",
           titleTemplate: "%s | {brand}",

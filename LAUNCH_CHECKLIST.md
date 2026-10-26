@@ -4,7 +4,7 @@ Work through this before telling anyone about the site. Everything except the ho
 
 ## Brand and business details (Admin)
 
-- [ ] **Final brand name**, short name and tagline (Branding & Theme). "FORM & SIGNAL" is a temporary working name.
+- [x] **Final brand name**: APV Tech (short name "APV"). Tagline can be refined in Branding & Theme.
 - [ ] Logo (transparent PNG/WebP) and favicon (Branding & Theme)
 - [ ] Brand colours, if they change (Branding & Theme). Keep text contrast at or above 4.5:1.
 - [ ] Public email and phone number (Contact Information)
@@ -28,7 +28,7 @@ Work through this before telling anyone about the site. Everything except the ho
 
 ## Accounts and integrations (environment variables)
 
-- [ ] Domain purchased and DNS set up
+- [x] Domain purchased (apvtech.in) — [ ] DNS pointed to Vercel
 - [ ] Neon database (`DATABASE_URL`, `DIRECT_DATABASE_URL`)
 - [ ] Cloudflare R2 bucket, public URL and scoped API token (`STORAGE_DRIVER=s3`, `S3_*`)
 - [ ] Resend account with a verified domain (`RESEND_API_KEY`, `EMAIL_FROM`), and the notification email set in Global Settings. Send a test email.
