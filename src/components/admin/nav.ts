@@ -21,7 +21,13 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       { label: "Media Library", href: "/admin/media", permission: "media.manage", icon: "Image" },
     ],
   },
-  { label: "Leads", items: [{ label: "Enquiries", href: "/admin/enquiries", permission: "leads.view", icon: "Inbox" }] },
+  {
+    label: "Leads",
+    items: [
+      { label: "Enquiries", href: "/admin/enquiries", permission: "leads.view", icon: "Inbox" },
+      { label: "Analytics", href: "/admin/analytics", permission: "analytics.view", icon: "BarChart3" },
+    ],
+  },
   {
     label: "Settings",
     items: [

@@ -113,6 +113,7 @@ export function HeroSignature({ eyebrow, headline, subheadline, description, pri
       ref={rootRef}
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-bg pt-[calc(var(--header-h)+2rem)]"
       aria-labelledby="hero-title"
+      data-track-area="hero"
     >
       {/* Collage */}
       {shown.length > 0 && (

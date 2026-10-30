@@ -29,6 +29,8 @@ export const PERMISSIONS = {
   "settings.manage": ["SUPER_ADMIN"],
   "users.manage": ["SUPER_ADMIN"],
   "activity.view": ["SUPER_ADMIN"],
+  "analytics.view": ["SUPER_ADMIN", "MARKETING"],
+  "analytics.export": ["SUPER_ADMIN", "MARKETING"],
 } as const satisfies Record<string, readonly Role[]>;
 
 export type Permission = keyof typeof PERMISSIONS;

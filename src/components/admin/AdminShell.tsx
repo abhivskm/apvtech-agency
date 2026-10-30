@@ -4,13 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Briefcase, Building2, ExternalLink, FileText, HelpCircle, History, Home, Image, Inbox, Layers, LayoutDashboard,
+  BarChart3, Briefcase, Building2, ExternalLink, FileText, HelpCircle, History, Home, Image, Inbox, Layers, LayoutDashboard,
   LogOut, Menu, Newspaper, Palette, Phone, Quote, Search, Settings, Share2, Tag, Users, X,
 } from "lucide-react";
 import type { AdminNavGroup } from "@/components/admin/nav";
 import { logout } from "@/app/admin/login/actions";
 
-const ICONS = { Briefcase, Building2, FileText, HelpCircle, History, Home, Image, Inbox, Layers, LayoutDashboard, Menu, Newspaper, Palette, Phone, Quote, Search, Settings, Share2, Tag, Users };
+const ICONS = { BarChart3, Briefcase, Building2, FileText, HelpCircle, History, Home, Image, Inbox, Layers, LayoutDashboard, Menu, Newspaper, Palette, Phone, Quote, Search, Settings, Share2, Tag, Users };
 
 type Props = {
   nav: AdminNavGroup[];

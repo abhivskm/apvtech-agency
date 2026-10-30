@@ -147,7 +147,7 @@ function HeroSection({ d, ctx }: { d: Data; ctx: Ctx }) {
 
   const lines = s(d, "headline").split("\n").filter(Boolean);
   return (
-    <section className="relative pt-[calc(var(--header-h)+clamp(3rem,10vw,9rem))]">
+    <section data-track-area="hero" className="relative pt-[calc(var(--header-h)+clamp(3rem,10vw,9rem))]">
       <div className="wrap">
         {s(d, "eyebrow") && (
           <p className="t-eyebrow fade-in mb-8 flex items-center gap-3" style={{ ["--d" as string]: "50ms" }}>
@@ -654,7 +654,7 @@ function CtaSection({ d, ctx }: { d: Data; ctx: Ctx }) {
   const primary = link(d, "primaryCta");
   const wa = d.showWhatsapp ? whatsappLink(ctx.settings.whatsappNumber, ctx.settings.whatsappMessage) : null;
   return (
-    <section className="section relative overflow-hidden">
+    <section data-track-area="bottom_cta" className="section relative overflow-hidden">
       <div className="wrap">
         <div className="relative border-t border-line pt-16">
           <h2 className="t-mega max-w-[13ch] t-balance" data-reveal>

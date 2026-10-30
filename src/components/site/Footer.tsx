@@ -88,6 +88,7 @@ export async function Footer({ settings, whatsappHref }: Props) {
         <div className="mt-20 border-t border-line py-8">
           <Link
             href={settings.defaultCtaHref}
+            data-track="cta"
             className="group flex items-end justify-between gap-6"
             aria-label={settings.defaultCtaLabel}
           >

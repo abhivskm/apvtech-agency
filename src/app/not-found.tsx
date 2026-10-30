@@ -7,7 +7,7 @@ export const metadata = { title: "Page not found", robots: { index: false } };
 export default function NotFound() {
   return (
     <SiteShell>
-      <section className="flex min-h-[80svh] items-center pt-[var(--header-h)]">
+      <section data-analytics-404 className="flex min-h-[80svh] items-center pt-[var(--header-h)]">
         <div className="wrap">
           <p className="t-eyebrow flex items-center gap-3">
             <span className="signal-dot" aria-hidden /> Error 404 — signal lost

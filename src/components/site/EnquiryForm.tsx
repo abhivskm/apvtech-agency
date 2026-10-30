@@ -7,6 +7,7 @@ import { ArrowUpRight, CheckCircle2, Loader2 } from "lucide-react";
 import { BUDGET_OPTIONS, INDUSTRY_OPTIONS, TIMELINE_OPTIONS, enquirySchema } from "@/lib/validation/enquiry";
 import { submitEnquiry } from "@/app/(site)/contact/actions";
 import { WhatsAppIcon } from "@/components/site/icons";
+import { track } from "@/lib/analytics/client";
 
 type Props = {
   services: { slug: string; title: string }[];
@@ -43,16 +44,25 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
   }, [preselectedPlan]);
   const startedAt = useRef<number>(0);
   const formRef = useRef<HTMLFormElement>(null);
+  const formStarted = useRef(false);
   const statusRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     startedAt.current = Date.now();
+    track("form_view");
   }, []);
 
   const toggle = (s: string) => setSelected((cur) => (cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]));
 
+  const markStarted = () => {
+    if (formStarted.current) return;
+    formStarted.current = true;
+    track("form_start");
+  };
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    track("form_submit");
     const fd = new FormData(e.currentTarget);
     const payload = {
       name: String(fd.get("name") ?? ""),
@@ -75,6 +85,7 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
     // Client-side validation for fast feedback; the server validates again.
     const check = enquirySchema.safeParse(payload);
     if (!check.success) {
+      track("form_error", { label: "validation" });
       const errs: Errors = {};
       for (const i of check.error.issues) errs[String(i.path[0])] ??= i.message;
       setErrors(errs);
@@ -88,9 +99,11 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
     startTransition(async () => {
       const res = await submitEnquiry(payload);
       if (res.ok) {
+        track("form_success");
         setDone(true);
         requestAnimationFrame(() => statusRef.current?.focus());
       } else {
+        track("form_error", { label: res.fieldErrors ? "validation" : "server" });
         setErrors(res.fieldErrors ?? {});
         setFormError(res.error);
       }
@@ -134,7 +147,7 @@ export function EnquiryForm({ services, plans = [], whatsappHref, preselected = 
     ) : null;
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-7" aria-describedby={formError ? "form-error" : undefined}>
+    <form ref={formRef} onSubmit={onSubmit} onFocusCapture={markStarted} noValidate className="space-y-7" aria-describedby={formError ? "form-error" : undefined}>
       <div aria-live="assertive" id="form-error">
         {formError && <p className="border border-(--brand-danger)/50 bg-(--brand-danger)/10 px-4 py-3 text-sm text-(--brand-danger-text)">{formError}</p>}
       </div>

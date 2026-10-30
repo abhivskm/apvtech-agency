@@ -646,3 +646,66 @@ model ActivityLog {
   @@index([entityType, entityId])
   @@index([actorId])
 }
+
+/// First-party analytics. One row per anonymous visit (30-minute inactivity timeout). Never holds raw IPs, form contents or user agents.
+model AnalyticsSession {
+  id           String   @id
+  visitorId    String
+  isNewVisitor Boolean  @default(false)
+  startedAt    DateTime @default(now())
+  lastSeenAt   DateTime @default(now())
+  entryPath    String   @default("")
+  currentPath  String   @default("")
+  channel      String   @default("Direct")
+  source       String   @default("direct")
+  referrerHost String?
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  utmTerm      String?
+  utmContent   String?
+  device       String   @default("desktop")
+  browser      String   @default("Other")
+  os           String   @default("Other")
+  language     String?
+  country      String?
+  region       String?
+  city         String?
+  pageviews    Int      @default(0)
+  engagedMs    Int      @default(0)
+  isLead       Boolean  @default(false)
+
+  events AnalyticsEvent[]
+
+  @@index([startedAt])
+  @@index([lastSeenAt])
+  @@index([visitorId])
+}
+
+model AnalyticsEvent {
+  id        BigInt           @id @default(autoincrement())
+  sessionId String
+  session   AnalyticsSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  type      String
+  path      String
+  group     String
+  slug      String?
+  label     String?
+  area      String?
+  value     Int?
+  createdAt DateTime         @default(now())
+
+  @@index([createdAt])
+  @@index([type, createdAt])
+  @@index([sessionId])
+}
+
+/// Daily totals kept after raw events pass the retention window.
+model AnalyticsDaily {
+  day       DateTime @db.Date
+  metric    String
+  dimension String   @default("")
+  value     Int      @default(0)
+
+  @@id([day, metric, dimension])
+}

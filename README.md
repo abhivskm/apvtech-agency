@@ -196,6 +196,51 @@ When an enquiry arrives it is **saved first**, then a notification is queued in 
 
 Add a GA4 ID (`G-…`) and/or GTM ID (`GTM-…`) in **Global Settings**. Nothing loads until an ID is set. If you turn on the consent option, analytics loads only after the visitor clicks *Accept*. The Search Console verification code and Google Business Profile URL are set in **SEO & Redirects** and **Contact Information**.
 
+### First-party analytics (Admin → Analytics)
+
+Built in, with no setup and no third party. Visitors are anonymous: a random visitor ID and visit ID (30-minute timeout) in `localStorage`. The dashboard needs a signed-in Super Admin or Marketing Manager, and it updates about every 3 seconds.
+
+**Not stored:** form contents, names, emails, phone numbers, raw IPs, full user agents, query strings (only UTM tags are kept). Location comes from Vercel's headers, so it is empty when running locally.
+
+**Not counted:** bots, signed-in staff, Do Not Track or Global Privacy Control browsers, visitors who declined the consent banner, and anyone who opened a page with `?ignore_me=1` (undo with `?ignore_me=0`).
+
+| Event | Recorded when | Label / area / value |
+| --- | --- | --- |
+| `pageview` | Any page view, including client-side navigation | Group and slug from the path |
+| `404` | The "not found" page is shown | Path |
+| `scroll` | 25, 50, 75 or 100% of the page reached | Value = depth |
+| `cta` | A `.btn` or `data-track="cta"` link is clicked | Label = button text; area = navbar, hero, bottom_cta, footer, floating or page |
+| `nav` | A menu or footer link is clicked | Label = link text; area |
+| `card` | A service, industry, work or insight link outside the menus is clicked | Label = slug; area = type |
+| `outbound` | A link to another site is clicked | Label = host only |
+| `contact_click` | A phone, email or WhatsApp link is clicked | Label = phone, email or whatsapp; area |
+| `form_view`, `form_start`, `form_submit` | The enquiry form is viewed, first focused or submitted | None |
+| `form_success` | The enquiry is accepted (this is a lead) | None |
+| `form_error` | The enquiry fails | Label = validation or server |
+| `js_error` | An uncaught script error | Label = message with URLs, emails and long numbers removed |
+| `vital` | Web vitals from real visits | Label = LCP, INP, CLS, FCP or TTFB; value (CLS × 1000) |
+
+Engaged time (visible and active in the last 30 seconds) and presence are sent as a 20-second heartbeat, stored on the session rather than as events.
+
+To label a new area of a page for CTA reports, add `data-track-area="name"` to its container.
+
+**Retention:** the nightly job (`/api/cron/outbox`) reduces visits older than `ANALYTICS_RETENTION_MONTHS` (13) to daily totals in `AnalyticsDaily`, then deletes the raw rows. The dashboard shows database size; Neon's free plan allows about 500 MB, so plan for a paid plan or shorter retention if traffic grows. Set `ANALYTICS_DISABLED=true` to stop collecting.
+
+**Test checklist** (use a private window, because signed-in staff are not counted; keep Admin → Analytics open in your normal window):
+
+- [ ] Open the homepage: "Live now" goes up and a Page view appears within 5 seconds.
+- [ ] Click "Start a Project" in the navbar, the hero, the bottom CTA and the footer: each shows as a CTA click with the right location.
+- [ ] Click a menu link and a footer link: Menu click.
+- [ ] Click a service, an industry, a work and an insight card: Card click with the slug.
+- [ ] Click a phone, email and WhatsApp link (these appear once the details are set in Contact Information): Contact click.
+- [ ] Open an unknown URL: Page not found.
+- [ ] Scroll a long page to the bottom: Scrolled 25, 50, 75 and 100%.
+- [ ] On /contact: submit empty (Form error: validation), then send a real test: Form viewed, Form started, Form submit attempt, Lead. Then delete the test enquiry.
+- [ ] Open a page with `?utm_source=test&utm_campaign=launch` in a new private window: it appears under UTM campaigns with its lead count.
+- [ ] Open `/?ignore_me=1`: nothing further appears from that browser. `/?ignore_me=0` turns it back on.
+- [ ] Sign out and load Admin → Analytics: you are sent to sign-in.
+- [ ] Export both CSVs and confirm they contain no form contents.
+
 ## Backups
 
 - **Neon:** point-in-time restore is included. Also take a regular logical backup:

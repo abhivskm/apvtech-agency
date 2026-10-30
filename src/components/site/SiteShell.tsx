@@ -13,6 +13,7 @@ import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 import { Analytics } from "@/components/site/Analytics";
 import { JsonLd } from "@/components/site/JsonLd";
 import { IntroLoader } from "@/components/site/IntroLoader";
+import { Tracker } from "@/components/site/Tracker";
 
 /** Shared public chrome (header, footer, WhatsApp, analytics) used by the site layout and the 404 page. */
 export async function SiteShell({ children }: { children: React.ReactNode }) {
@@ -67,6 +68,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
       <Footer settings={settings} whatsappHref={wa} />
       {wa && <WhatsAppFab href={wa} />}
       <MotionInit />
+      <Tracker />
       <Analytics
         gaId={settings.gaMeasurementId}
         gtmId={settings.gtmContainerId}

@@ -2,13 +2,14 @@ import { env } from "@/lib/env";
 import { db } from "@/lib/db";
 import { safeEqual } from "@/lib/crypto";
 import { processOutbox } from "@/lib/email/outbox";
+import { rollupAndPurge } from "@/lib/analytics/retention";
 import { storageStatus } from "@/lib/storage";
 import { cleanupOrphanBlobs } from "@/lib/storage/blob";
 import { logError } from "@/lib/log";
 
 /**
  * Nightly maintenance (Vercel Cron: see vercel.json), called with header `Authorization: Bearer <CRON_SECRET>`:
- * retries pending/failed enquiry notifications and removes unfinished media uploads.
+ * retries pending/failed enquiry notifications, removes unfinished media uploads and applies analytics retention.
  */
 export async function GET(req: Request) {
   const auth = req.headers.get("authorization") ?? "";
@@ -29,5 +30,12 @@ export async function GET(req: Request) {
       logError("orphan upload cleanup failed", err);
     }
   }
-  return Response.json({ ok: true, ...result, orphanUploadsDeleted });
+
+  let analyticsSessionsRolledUp = 0;
+  try {
+    analyticsSessionsRolledUp = (await rollupAndPurge()).sessions;
+  } catch (err) {
+    logError("analytics retention failed", err);
+  }
+  return Response.json({ ok: true, ...result, orphanUploadsDeleted, analyticsSessionsRolledUp });
 }

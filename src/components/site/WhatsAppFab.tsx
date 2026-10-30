@@ -5,6 +5,7 @@ export function WhatsAppFab({ href }: { href: string }) {
   return (
     <a
       href={href}
+      data-track-area="floating"
       target="_blank"
       rel="noopener noreferrer"
       className="group fixed bottom-5 right-5 z-40 flex h-14 items-center gap-2 rounded-full bg-[#25D366] pl-4 pr-4 text-[#0A0A0A] shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-transform duration-300 hover:-translate-y-0.5 sm:bottom-7 sm:right-7"
